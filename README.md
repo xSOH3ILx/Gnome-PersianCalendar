@@ -80,6 +80,10 @@ make pack          # ساخت بسته‌ی قابل نصب در build/
 
 <div dir="rtl">
 
+## 🗺 نقشه‌ی راه
+
+برنامه‌ی نسخه‌های بعدی در [docs/ROADMAP.md](docs/ROADMAP.md) — مهم‌ترین مورد: افزودن رویداد شخصی با همگام‌سازی تقویم گنوم و Google Calendar در نسخه‌ی 1.1.0.
+
 ## 📜 مجوز و قدردانی
 
 این پروژه تحت مجوز [GPL-3.0](LICENSE) منتشر می‌شود و بر پایه‌ی پروژه‌ی [gnome-shamsi-calendar](https://github.com/SCR-IR/gnome-shamsi-calendar) از SCR-IR بازسازی و بازطراحی شده است.

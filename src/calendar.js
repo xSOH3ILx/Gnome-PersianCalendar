@@ -590,7 +590,7 @@ export class Calendar {
 
         results.forEach(res => {
           let row = new St.BoxLayout({ style_class: 'shcalendar-convert-row' });
-          let lbl = new St.Label({ text: res.label, x_expand: true });
+          let lbl = new St.Label({ text: res.label, x_expand: true, style_class: 'shcalendar-convert-label' });
           let copyBtn = new St.Button({
             label: _('کپی'),
             style_class: 'shcalendar-copy-btn'

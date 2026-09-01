@@ -193,7 +193,8 @@ export class Events {
         this._events.push({
           type: 'google',
           symbol: '📅',
-          event: `\u2068${gEv.summary}\u2069${startTimeStr}`,
+          // LRI/PDI isolate: mixed titles like "رضا نجات‌جو's birthday" keep the apostrophe attached to the LTR run
+          event: `\u2066${gEv.summary}\u2069${startTimeStr}`,
           shadi: false,
           holiday: false
         });
