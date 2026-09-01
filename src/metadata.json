@@ -1,0 +1,17 @@
+{
+  "uuid": "shamsi-calendar@gnome.scr.ir",
+  "name": "Persian Calendar (Shamsi)",
+  "description": "تقویم شمسی مدرن، سبک و زیبا برای میزکار گنوم.\n- نمایش تاریخ خورشیدی، قمری و میلادی\n- اتصال و همگام‌سازی با Google Calendar و یادآورهای سیستمی\n- درج تعطیلی‌ها و مناسبت‌های رسمی تقویم\n- ابزار تبدیل تاریخ\n- رابط کاربری مدرن منطبق بر استاندارد Libadwaita",
+  "shell-version": [
+    "46",
+    "47",
+    "48",
+    "49",
+    "50"
+  ],
+  "url": "https://github.com/xSOH3ILx/Gnome-PersianCalendar",
+  "settings-schema": "org.gnome.shell.extensions.shamsi-calendar",
+  "gettext-domain": "shamsi-calendar@gnome.scr.ir",
+  "version": 1,
+  "version-name": "1.0.0"
+}

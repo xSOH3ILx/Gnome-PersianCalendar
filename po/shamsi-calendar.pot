@@ -1,0 +1,282 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Persian Calendar (Shamsi) package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Persian Calendar (Shamsi)\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-01 08:49+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/calendar.js:95 src/calendar.js:310
+msgid "امروز"
+msgstr ""
+
+#: src/calendar.js:310
+msgid "روز پیش"
+msgstr ""
+
+#: src/calendar.js:310
+msgid "روز بعد"
+msgstr ""
+
+#: src/calendar.js:339 src/calendar.js:563
+msgid "هـ.ش"
+msgstr ""
+
+#: src/calendar.js:364 src/calendar.js:583
+msgid "هـ.ق"
+msgstr ""
+
+#: src/calendar.js:400 src/prefs.js:120
+msgid "مناسبت‌ها و رویدادها"
+msgstr ""
+
+#: src/calendar.js:401 src/prefs.js:120
+msgid "تبدیل تاریخ"
+msgstr ""
+
+#: src/calendar.js:436
+msgid "مناسبت یا رویدادی برای این روز ثبت نشده است."
+msgstr ""
+
+#: src/calendar.js:450 src/extension.js:201
+msgid "تعطیل"
+msgstr ""
+
+#: src/calendar.js:485
+msgid "سال (مثال: ۱۴۰۴)"
+msgstr ""
+
+#: src/calendar.js:491
+msgid "ماه (۱-۱۲)"
+msgstr ""
+
+#: src/calendar.js:497
+msgid "روز (۱-۳۱)"
+msgstr ""
+
+#: src/calendar.js:547
+msgid "تاریخ وارد شده در تقویم معتبر نیست!"
+msgstr ""
+
+#: src/calendar.js:572
+msgid "میلادی"
+msgstr ""
+
+#: src/calendar.js:595
+msgid "کپی"
+msgstr ""
+
+#: src/calendar.js:608
+msgid "رفتن به این تاریخ در تقویم"
+msgstr ""
+
+#: src/calendar.js:621
+msgid "از شمسی"
+msgstr ""
+
+#: src/calendar.js:622
+msgid "از میلادی"
+msgstr ""
+
+#: src/calendar.js:623
+msgid "از قمری"
+msgstr ""
+
+#: src/extension.js:36
+msgid "تقویم هجری شمسی"
+msgstr ""
+
+#: src/prefs.js:34
+msgid "تنظیمات عمومی"
+msgstr ""
+
+#: src/prefs.js:41
+msgid "ابزارک نوار بالا"
+msgstr ""
+
+#: src/prefs.js:42
+msgid "نحوه نمایش تاریخ در نوار وضعیت گنوم"
+msgstr ""
+
+#: src/prefs.js:48
+msgid "موقعیت در نوار"
+msgstr ""
+
+#: src/prefs.js:50
+msgid "سمت راست"
+msgstr ""
+
+#: src/prefs.js:50
+msgid "وسط نوار"
+msgstr ""
+
+#: src/prefs.js:50
+msgid "سمت چپ"
+msgstr ""
+
+#: src/prefs.js:85
+msgid "قالب نمایش تاریخ"
+msgstr ""
+
+#: src/prefs.js:98
+msgid "شخصی‌سازی رنگ‌ها"
+msgstr ""
+
+#: src/prefs.js:103
+msgid "استفاده از رنگ سفارشی در نوار"
+msgstr ""
+
+#: src/prefs.js:108
+msgid "رنگ روزهای عادی"
+msgstr ""
+
+#: src/prefs.js:109
+msgid "رنگ روزهای تعطیل"
+msgstr ""
+
+#: src/prefs.js:113
+msgid "پنجره تقویم"
+msgstr ""
+
+#: src/prefs.js:118
+msgid "برگه پیش‌فرض"
+msgstr ""
+
+#: src/prefs.js:133
+msgid "اعلان‌ها"
+msgstr ""
+
+#: src/prefs.js:138
+msgid "اعلان مناسبت‌های روز هنگام شروع"
+msgstr ""
+
+#: src/prefs.js:139
+msgid "نمایش اعلان مناسبت‌های امروز پس از ورود به سیستم"
+msgstr ""
+
+#: src/prefs.js:170
+msgid "رویدادها و همگام‌سازی"
+msgstr ""
+
+#: src/prefs.js:177
+msgid "همگام‌سازی با حساب کاربری"
+msgstr ""
+
+#: src/prefs.js:178
+msgid "اتصال خودکار به رویدادهای تقویم گوگل و GNOME Online Accounts"
+msgstr ""
+
+#: src/prefs.js:183
+msgid "همگام‌سازی با Google Calendar / رویدادهای سیستم"
+msgstr ""
+
+#: src/prefs.js:184
+msgid "نمایش رویدادها و یادآورهای شخصی ثبت شده در تقویم لینوکس/گوگل"
+msgstr ""
+
+#: src/prefs.js:191
+msgid "مناسبت‌های رسمی و تقویمی"
+msgstr ""
+
+#: src/prefs.js:196
+msgid "مناسبت‌های خورشیدی"
+msgstr ""
+
+#: src/prefs.js:197
+msgid "تعطیلات و مناسبت‌های رسمی تقویم شمسی ایران"
+msgstr ""
+
+#: src/prefs.js:203
+msgid "مناسبت‌های قمری"
+msgstr ""
+
+#: src/prefs.js:204
+msgid "مناسبت‌ها و تعطیلات مذهبی و قمری"
+msgstr ""
+
+#: src/prefs.js:210
+msgid "مناسبت‌های بین‌المللی"
+msgstr ""
+
+#: src/prefs.js:211
+msgid "رویدادهای رسمی تقویم میلادی"
+msgstr ""
+
+#: src/prefs.js:217
+msgid "جشن‌ها و مناسبت‌های کهن ایرانی"
+msgstr ""
+
+#: src/prefs.js:225
+msgid "تنظیمات هفته"
+msgstr ""
+
+#: src/prefs.js:231
+msgid "آغاز هفته و روزهای تعطیل"
+msgstr ""
+
+#: src/prefs.js:236
+msgid "روز آغازین هفته"
+msgstr ""
+
+#: src/prefs.js:238 src/prefs.js:249
+msgid "شنبه"
+msgstr ""
+
+#: src/prefs.js:238 src/prefs.js:249
+msgid "یکشنبه"
+msgstr ""
+
+#: src/prefs.js:238 src/prefs.js:249
+msgid "دوشنبه"
+msgstr ""
+
+#: src/prefs.js:249
+msgid "سه‌شنبه"
+msgstr ""
+
+#: src/prefs.js:249
+msgid "چهارشنبه"
+msgstr ""
+
+#: src/prefs.js:249
+msgid "پنج‌شنبه"
+msgstr ""
+
+#: src/prefs.js:249
+msgid "جمعه"
+msgstr ""
+
+#: src/prefs.js:252
+msgid "تعطیلی هفتگی:"
+msgstr ""
+
+#: src/prefs.js:261
+msgid "درباره"
+msgstr ""
+
+#: src/prefs.js:267
+msgid "تقویم شمسی برای گنوم"
+msgstr ""
+
+#: src/prefs.js:268
+msgid "نسخه مدرن، سبک و بازطراحی‌شده بر پایه استانداردهای Libadwaita"
+msgstr ""
+
+#: src/prefs.js:273
+msgid "نسخه"
+msgstr ""
+
+#: src/prefs.js:279
+msgid "مخزن سورس‌کد"
+msgstr ""

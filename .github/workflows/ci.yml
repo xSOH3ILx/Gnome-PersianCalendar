@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npx eslint src
+      - name: Unit tests
+        run: node --test
+      - name: Install GLib tools and gettext
+        run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin gettext zip
+      - name: Compile schemas
+        run: glib-compile-schemas src/schemas
+      - name: Validate translatable strings
+        run: xgettext --from-code=UTF-8 --language=JavaScript --keyword=_ --output=/tmp/check.pot src/*.js
+      - name: Package extension
+        run: |
+          cd src
+          zip -rq "../shamsi-calendar@gnome.scr.ir.shell-extension.zip" . -x "schemas/gschemas.compiled"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shamsi-calendar-shell-extension
+          path: shamsi-calendar@gnome.scr.ir.shell-extension.zip

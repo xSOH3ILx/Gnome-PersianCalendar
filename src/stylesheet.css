@@ -1,0 +1,327 @@
+/* Modern GNOME 46-50 Adwaita Stylesheet for Shamsi Calendar */
+
+.shcalendar-panel-label {
+  font-weight: bold;
+  padding: 0 6px;
+}
+
+.shcalendar-root-container {
+  padding: 8px;
+}
+
+.shcalendar-actor-right {
+  margin: 6px;
+}
+
+.shcalendar-actor-left {
+  margin: 6px;
+  background-color: alpha(currentColor, 0.04);
+  border: 1px solid alpha(currentColor, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 280px;
+}
+
+/* Header & Month Navigation */
+.shcalendar-nav-header {
+  padding: 4px 0 10px 0;
+  spacing: 4px;
+}
+
+.shcalendar-nav-button {
+  min-width: 32px;
+  min-height: 32px;
+  padding: 4px;
+  border-radius: 8px;
+  background-color: alpha(currentColor, 0.05);
+  border: 1px solid alpha(currentColor, 0.08);
+}
+
+.shcalendar-nav-button:hover {
+  background-color: alpha(currentColor, 0.12);
+}
+
+.shcalendar-nav-button:active {
+  background-color: alpha(currentColor, 0.2);
+}
+
+.shcalendar-month-label {
+  font-size: 1.15em;
+  font-weight: 800;
+  padding: 4px 10px;
+}
+
+/* Weekday Headings */
+.shcalendar-day-heading {
+  font-size: 0.88em;
+  font-weight: 700;
+  opacity: 0.65;
+  text-align: center;
+  padding: 4px 0 8px 0;
+}
+
+/* Calendar Grid Day Buttons */
+.shcalendar-day-button {
+  min-width: 44px;
+  min-height: 44px;
+  margin: 2px;
+  padding: 2px;
+  border-radius: 10px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition-duration: 150ms;
+}
+
+.shcalendar-day-button:hover {
+  background-color: alpha(currentColor, 0.08);
+}
+
+.shcalendar-day-button.today {
+  border: 1.5px solid #3584e4;
+  background-color: alpha(#3584e4, 0.12);
+}
+
+.shcalendar-day-button.selected {
+  background-color: #3584e4;
+  color: #ffffff;
+}
+
+.shcalendar-day-button.selected .shcalendar-pdate-day-txt,
+.shcalendar-day-button.selected .shcalendar-hdate-day-txt,
+.shcalendar-day-button.selected .shcalendar-gdate-day-txt {
+  color: #ffffff !important;
+}
+
+.shcalendar-day-button.holiday .shcalendar-pdate-day-txt {
+  color: #e01b24;
+  font-weight: 800;
+}
+
+.shcalendar-day-button.other-month {
+  opacity: 0.35;
+}
+
+.shcalendar-pdate-day-txt {
+  font-size: 1.15em;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.shcalendar-hdate-day-txt {
+  font-size: 0.65em;
+  opacity: 0.55;
+  text-align: center;
+}
+
+.shcalendar-gdate-day-txt {
+  font-size: 0.65em;
+  opacity: 0.55;
+  text-align: center;
+}
+
+/* Selected Date Card (Left Column) */
+.shcalendar-selected-card {
+  padding-bottom: 10px;
+}
+
+.shcalendar-card-header {
+  font-size: 1.05em;
+  font-weight: 700;
+  opacity: 0.8;
+  padding-bottom: 4px;
+}
+
+.shcalendar-card-pdate {
+  font-size: 1.35em;
+  font-weight: 800;
+  color: #3584e4;
+  padding-bottom: 4px;
+}
+
+.shcalendar-card-subdates {
+  font-size: 0.85em;
+  opacity: 0.7;
+  padding-bottom: 10px;
+}
+
+.shcalendar-card-sep {
+  opacity: 0.35;
+}
+
+/* Tabs Bar */
+.shcalendar-tab-bar {
+  spacing: 4px;
+  padding: 4px 0 10px 0;
+}
+
+.shcalendar-tab-button {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+  background-color: alpha(currentColor, 0.05);
+  border: 1px solid alpha(currentColor, 0.08);
+}
+
+.shcalendar-tab-button:hover {
+  background-color: alpha(currentColor, 0.1);
+}
+
+.shcalendar-tab-button.active {
+  background-color: #3584e4;
+  color: #ffffff;
+  border-color: transparent;
+}
+
+/* Events List */
+.shcalendar-events-scrollable {
+  max-height: 220px;
+  min-height: 140px;
+}
+
+.shcalendar-events-layout {
+  spacing: 6px;
+}
+
+.shcalendar-event-item {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: alpha(currentColor, 0.04);
+  border: 1px solid alpha(currentColor, 0.06);
+  spacing: 8px;
+}
+
+.shcalendar-event-item.holiday {
+  background-color: alpha(#e01b24, 0.08);
+  border: 1px solid alpha(#e01b24, 0.2);
+}
+
+.shcalendar-event-badge {
+  font-size: 0.75em;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background-color: alpha(currentColor, 0.1);
+}
+
+.shcalendar-event-badge.holiday {
+  background-color: #e01b24;
+  color: #ffffff;
+}
+
+.shcalendar-event-text {
+  font-size: 0.92em;
+  line-height: 1.35;
+}
+
+.shcalendar-event-text.holiday {
+  color: #e01b24;
+  font-weight: 700;
+}
+
+.shcalendar-empty-event-label {
+  font-size: 0.9em;
+  opacity: 0.55;
+  padding: 20px 0;
+}
+
+/* Date Converter */
+.shcalendar-converter-container {
+  spacing: 8px;
+}
+
+.shcalendar-converter-type-bar {
+  spacing: 4px;
+}
+
+.shcalendar-converter-type-btn {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  background-color: alpha(currentColor, 0.05);
+}
+
+.shcalendar-converter-type-btn.active {
+  background-color: #3584e4;
+  color: #ffffff;
+}
+
+.shcalendar-converter-inputs {
+  spacing: 4px;
+}
+
+.shcalendar-converter-entry {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: alpha(currentColor, 0.06);
+  border: 1px solid alpha(currentColor, 0.12);
+  font-size: 0.95em;
+}
+
+.shcalendar-converter-results {
+  spacing: 6px;
+  padding-top: 8px;
+}
+
+.shcalendar-convert-row {
+  padding: 6px 8px;
+  border-radius: 6px;
+  background-color: alpha(currentColor, 0.04);
+  spacing: 6px;
+}
+
+.shcalendar-copy-btn, .shcalendar-jump-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.82em;
+  background-color: alpha(currentColor, 0.08);
+}
+
+.shcalendar-copy-btn:hover, .shcalendar-jump-btn:hover {
+  background-color: alpha(currentColor, 0.16);
+}
+
+.shcalendar-converter-error {
+  color: #e01b24;
+  font-size: 0.88em;
+  padding: 8px 0;
+}
+
+/* Bottom Action Bar */
+.shcalendar-action-bar {
+  padding: 6px 12px 2px 12px;
+  spacing: 6px;
+}
+
+.shcalendar-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: alpha(currentColor, 0.05);
+  border: 1px solid alpha(currentColor, 0.08);
+}
+
+.shcalendar-btn:hover {
+  background-color: alpha(currentColor, 0.12);
+}
+
+.shcalendar-bottom-label {
+  font-size: 0.88em;
+  opacity: 0.75;
+}
+
+.shcalendar-today-button {
+  padding: 4px 12px;
+  margin: 0 4px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  font-size: 0.9em;
+}
+
+.shcalendar-today-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.shcalendar-today-button:active {
+  background-color: rgba(255, 255, 255, 0.3);
+}
