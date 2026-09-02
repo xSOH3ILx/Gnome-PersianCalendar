@@ -92,11 +92,10 @@ function escapeIcsText(text) {
     .replace(/\r?\n/g, '\\n');
 }
 
-function buildVevent({ summary, gy, gm, gd, startMin, endMin }) {
+function buildVevent({ uid, summary, gy, gm, gd, startMin, endMin, reminderMin }) {
   let now = new Date();
   let dtstamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}` +
     `T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}Z`;
-  let uid = `shamsi-${Date.now()}-${Math.floor(Math.random() * 1e6)}@gnome.scr.ir`;
   let date = `${gy}${pad(gm)}${pad(gd)}`;
 
   let dtLines;
@@ -116,14 +115,44 @@ function buildVevent({ summary, gy, gm, gd, startMin, endMin }) {
     dtLines = [`DTSTART:${st}`, `DTEND:${en}`];
   }
 
-  return [
+  let lines = [
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${dtstamp}`,
     ...dtLines,
-    `SUMMARY:${escapeIcsText(summary)}`,
-    'END:VEVENT'
-  ].join('\r\n');
+    `SUMMARY:${escapeIcsText(summary)}`
+  ];
+
+  if (reminderMin !== null && reminderMin !== undefined) {
+    lines.push(
+      'BEGIN:VALARM',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeIcsText(summary)}`,
+      `TRIGGER:-PT${reminderMin}M`,
+      'END:VALARM'
+    );
+  }
+
+  lines.push('END:VEVENT');
+  return lines.join('\r\n');
+}
+
+async function openCalendar(calUid) {
+  let opened = await dbusCall(
+    CAL_BUS, CAL_FACTORY_PATH,
+    'org.gnome.evolution.dataserver.CalendarFactory', 'OpenCalendar',
+    new GLib.Variant('(s)', [calUid]), '(os)'
+  );
+  let [objPath, busName] = opened.deep_unpack();
+  if (!busName) busName = CAL_BUS;
+
+  // Some EDS versions require an explicit Open; ignore if unsupported
+  try {
+    await dbusCall(busName, objPath, CAL_IFACE, 'Open', null, null);
+  } catch (e) {
+    // auto-opened on newer EDS; continue
+  }
+  return [busName, objPath];
 }
 
 /**
@@ -136,29 +165,33 @@ function buildVevent({ summary, gy, gm, gd, startMin, endMin }) {
  * @param {number} args.gd      - Gregorian day
  * @param {number|null} args.startMin - Start in minutes from midnight, or null for all-day
  * @param {number|null} args.endMin   - End in minutes from midnight, or null for all-day
+ * @param {number|null} args.reminderMin - Display reminder N minutes before the event, or null
+ * @returns {Promise<{uid: string}>} The created event's iCalendar UID
  */
-export async function createEvent({ calUid, summary, gy, gm, gd, startMin = null, endMin = null }) {
-  // 1) Ask the factory for this calendar's D-Bus object
-  let opened = await dbusCall(
-    CAL_BUS, CAL_FACTORY_PATH,
-    'org.gnome.evolution.dataserver.CalendarFactory', 'OpenCalendar',
-    new GLib.Variant('(s)', [calUid]), '(os)'
-  );
-  let [objPath, busName] = opened.deep_unpack();
-  if (!busName) busName = CAL_BUS;
+export async function createEvent({ calUid, summary, gy, gm, gd, startMin = null, endMin = null, reminderMin = null }) {
+  let [busName, objPath] = await openCalendar(calUid);
 
-  // 2) Open the calendar (some EDS versions require it; ignore if unsupported)
-  try {
-    await dbusCall(busName, objPath, CAL_IFACE, 'Open', null, null);
-  } catch (e) {
-    // auto-opened on newer EDS; continue
-  }
-
-  // 3) Create the event
-  let ics = buildVevent({ summary, gy, gm, gd, startMin, endMin });
+  let uid = `shamsi-${Date.now()}-${Math.floor(Math.random() * 1e6)}@gnome.scr.ir`;
+  let ics = buildVevent({ uid, summary, gy, gm, gd, startMin, endMin, reminderMin });
   await dbusCall(
     busName, objPath, CAL_IFACE, 'CreateObjects',
     new GLib.Variant('(asu)', [[ics], 0]), null
+  );
+  return { uid };
+}
+
+/**
+ * Remove a calendar event from EDS by UID.
+ * @param {object} args
+ * @param {string} args.calUid - EDS source UID the event lives in
+ * @param {string} args.uid    - iCalendar UID of the event
+ */
+export async function removeEvent({ calUid, uid }) {
+  let [busName, objPath] = await openCalendar(calUid);
+  // mod type 7 = E_CAL_OBJ_MOD_ALL, empty rid = the whole (non-recurring) event
+  await dbusCall(
+    busName, objPath, CAL_IFACE, 'RemoveObjects',
+    new GLib.Variant('(a(ss)uu)', [[[uid, '']], 7, 0]), null
   );
   return true;
 }

@@ -12,6 +12,6 @@
   "url": "https://github.com/xSOH3ILx/Gnome-PersianCalendar",
   "settings-schema": "org.gnome.shell.extensions.shamsi-calendar",
   "gettext-domain": "shamsi-calendar@gnome.scr.ir",
-  "version": 2,
-  "version-name": "1.1.0"
+  "version": 3,
+  "version-name": "1.2.0"
 }

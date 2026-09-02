@@ -97,6 +97,12 @@
       <summary>Display ancient Persian events</summary>
     </key>
 
+    <!-- Personal events store (v1.2.0) -->
+    <key name="personal-events" type="s">
+      <default>'[]'</default>
+      <summary>JSON store of personal events created from the popup</summary>
+    </key>
+
     <!-- Google Calendar Sync (EDS) -->
     <key name="enable-google-calendar" type="b">
       <default>true</default>

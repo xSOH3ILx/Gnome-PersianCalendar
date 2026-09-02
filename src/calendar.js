@@ -9,6 +9,9 @@ import * as Tarikh from './Tarikh.js';
 import * as Events from './Events.js';
 import * as EDS from './EDS.js';
 
+// Reminder choices in minutes before the event; null = no reminder
+const REMINDER_OPTIONS = [null, 10, 30, 60, 1440];
+
 export class Calendar {
 
   constructor(Schema, cssThemeID, setBottomBarText = (text = '') => { }, googleSync = null) {
@@ -44,6 +47,8 @@ export class Calendar {
     this._edsCalendars = null;
     this._edsCalIndex = 0;
     this._activeCalBtn = null;
+    this._editingEvent = null;
+    this._reminderIndex = 0;
     let defaultTab = this.schema.get_string('default-tab');
     this._selectedTab = (defaultTab === 'prayTimes') ? 'events' : defaultTab;
 
@@ -138,6 +143,8 @@ export class Calendar {
       });
       addBtn.connect('clicked', () => {
         this._addEventFormOpen = true;
+        this._editingEvent = null;
+        this._reminderIndex = 0;
         this._loadEdsCalendars();
         this._update();
       });
@@ -146,12 +153,22 @@ export class Calendar {
       let form = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-add-event-form' });
       form.set_text_direction(Clutter.TextDirection.RTL);
 
+      let editing = this._editingEvent;
+      if (editing) {
+        let editHeader = new St.Label({
+          text: _('ویرایش رویداد'),
+          style_class: 'shcalendar-add-event-hint'
+        });
+        form.add_child(editHeader);
+      }
+
       let titleEntry = new St.Entry({
         hint_text: _('عنوان رویداد'),
         can_focus: true,
         x_expand: true,
         style_class: 'shcalendar-converter-entry'
       });
+      if (editing) titleEntry.set_text(editing.title);
       form.add_child(titleEntry);
 
       let timeRow = new St.BoxLayout({ style_class: 'shcalendar-add-event-times' });
@@ -168,6 +185,10 @@ export class Calendar {
         x_expand: true,
         style_class: 'shcalendar-converter-entry'
       });
+      if (editing && editing.startMin !== null && editing.startMin !== undefined) {
+        startEntry.set_text(this._formatTime(editing.startMin));
+        endEntry.set_text(this._formatTime(editing.endMin));
+      }
       timeRow.add_child(startEntry);
       timeRow.add_child(endEntry);
       form.add_child(timeRow);
@@ -178,6 +199,10 @@ export class Calendar {
       });
       form.add_child(timeHint);
 
+      if (editing && this._edsCalendars) {
+        let ci = this._edsCalendars.findIndex(c => c.uid === editing.calUid);
+        if (ci >= 0) this._edsCalIndex = ci;
+      }
       let calName = this._edsCalendars?.[this._edsCalIndex]?.name ?? _('پیش‌فرض سیستم');
       let calBtn = new St.Button({
         label: _('تقویم:') + ' ' + calName,
@@ -193,6 +218,22 @@ export class Calendar {
       this._activeCalBtn = calBtn;
       form.add_child(calBtn);
 
+      let remLabels = [_('بدون یادآور'), _('۱۰ دقیقه قبل'), _('۳۰ دقیقه قبل'), _('۱ ساعت قبل'), _('۱ روز قبل')];
+      if (editing) {
+        let ri = REMINDER_OPTIONS.indexOf(editing.reminderMin ?? null);
+        this._reminderIndex = ri >= 0 ? ri : 0;
+      }
+      let remBtn = new St.Button({
+        label: _('یادآور:') + ' ' + remLabels[this._reminderIndex],
+        style_class: 'shcalendar-add-event-cal',
+        x_expand: true
+      });
+      remBtn.connect('clicked', () => {
+        this._reminderIndex = (this._reminderIndex + 1) % REMINDER_OPTIONS.length;
+        remBtn.set_label(_('یادآور:') + ' ' + remLabels[this._reminderIndex]);
+      });
+      form.add_child(remBtn);
+
       let btnRow = new St.BoxLayout({ style_class: 'shcalendar-add-event-actions' });
       btnRow.set_text_direction(Clutter.TextDirection.RTL);
       let saveBtn = new St.Button({ label: _('ذخیره'), style_class: 'shcalendar-add-event-save', x_expand: true });
@@ -207,6 +248,7 @@ export class Calendar {
       cancelBtn.connect('clicked', () => {
         this._addEventFormOpen = false;
         this._activeCalBtn = null;
+        this._editingEvent = null;
         this._update();
       });
 
@@ -214,6 +256,84 @@ export class Calendar {
     }
 
     parentBox.add_child(addBox);
+  }
+
+  _getPersonalEvents = () => {
+    try {
+      let list = JSON.parse(this.schema.get_string('personal-events'));
+      return Array.isArray(list) ? list : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  _setPersonalEvents = (list) => {
+    this.schema.set_string('personal-events', JSON.stringify(list));
+  }
+
+  _personalEventsForDay = (gy, gm, gd) => {
+    return this._getPersonalEvents().filter(p => p.gy === gy && p.gm === gm && p.gd === gd);
+  }
+
+  _formatTime = (min) => {
+    let h = String(Math.floor(min / 60)).padStart(2, '0');
+    let m = String(min % 60).padStart(2, '0');
+    return Str.numbersFormat(`${h}:${m}`);
+  }
+
+  _renderPersonalEventRows = (parentBox, personalEvents) => {
+    for (let pEv of personalEvents) {
+      let row = new St.BoxLayout({
+        vertical: false,
+        style_class: 'shcalendar-event-item personal'
+      });
+      row.set_text_direction(Clutter.TextDirection.RTL);
+
+      let badge = new St.Label({ text: '✏️', style_class: 'shcalendar-event-badge' });
+      row.add_child(badge);
+
+      let timeStr = (pEv.startMin !== null && pEv.startMin !== undefined)
+        ? ` (${this._formatTime(pEv.startMin)}–${this._formatTime(pEv.endMin)})`
+        : '';
+      let lbl = new St.Label({
+        text: pEv.title + timeStr,
+        x_expand: true,
+        style_class: 'shcalendar-event-text'
+      });
+      lbl.clutter_text.line_wrap = true;
+      lbl.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
+      row.add_child(lbl);
+
+      let editBtn = new St.Button({ label: _('ویرایش'), style_class: 'shcalendar-event-mini-btn' });
+      editBtn.connect('clicked', () => {
+        this._editingEvent = pEv;
+        this._addEventFormOpen = true;
+        this._loadEdsCalendars();
+        this._update();
+      });
+      row.add_child(editBtn);
+
+      let delBtn = new St.Button({ label: _('حذف'), style_class: 'shcalendar-event-mini-btn danger' });
+      delBtn.connect('clicked', () => {
+        this._deletePersonalEvent(pEv);
+      });
+      row.add_child(delBtn);
+
+      parentBox.add_child(row);
+    }
+  }
+
+  _deletePersonalEvent = (pEv) => {
+    this.setBottomBarText(_('در حال حذف…'));
+    EDS.removeEvent({ calUid: pEv.calUid, uid: pEv.uid }).catch(e => {
+      // Already removed elsewhere (e.g. GNOME Calendar); clean up the store anyway
+      console.error('ShamsiCalendar: removeEvent failed (cleaning up store):', e);
+    }).then(() => {
+      this._setPersonalEvents(this._getPersonalEvents().filter(x => x.uid !== pEv.uid));
+      this.setBottomBarText(_('رویداد حذف شد'));
+      if (this.googleSync) this.googleSync.requestRange();
+      this._update();
+    });
   }
 
   _loadEdsCalendars = () => {
@@ -265,20 +385,34 @@ export class Calendar {
       return;
     }
 
-    let calUid = this._edsCalendars?.[this._edsCalIndex]?.uid ?? 'system-calendar';
+    let editing = this._editingEvent;
+    let calUid = this._edsCalendars?.[this._edsCalIndex]?.uid ?? (editing ? editing.calUid : 'system-calendar');
+    let reminderMin = REMINDER_OPTIONS[this._reminderIndex] ?? null;
+    let gy = editing ? editing.gy : this._selectedDateObj.gregorianYear;
+    let gm = editing ? editing.gm : this._selectedDateObj.gregorianMonth;
+    let gd = editing ? editing.gd : this._selectedDateObj.gregorianDay;
+
     this.setBottomBarText(_('در حال ذخیره…'));
 
-    EDS.createEvent({
-      calUid,
-      summary: title,
-      gy: this._selectedDateObj.gregorianYear,
-      gm: this._selectedDateObj.gregorianMonth,
-      gd: this._selectedDateObj.gregorianDay,
-      startMin,
-      endMin
-    }).then(() => {
+    let removeOld = editing
+      ? EDS.removeEvent({ calUid: editing.calUid, uid: editing.uid }).catch(e => {
+        console.error('ShamsiCalendar: removing old event failed (continuing):', e);
+      })
+      : Promise.resolve();
+
+    removeOld.then(() => EDS.createEvent({
+      calUid, summary: title, gy, gm, gd, startMin, endMin, reminderMin
+    })).then(result => {
+      let list = this._getPersonalEvents().filter(x => !editing || x.uid !== editing.uid);
+      list.push({ uid: result.uid, calUid, title, gy, gm, gd, startMin, endMin, reminderMin });
+      // Prune entries older than ~400 days to keep the store small
+      let cutoff = Date.now() - 400 * 86400 * 1000;
+      list = list.filter(x => Date.UTC(x.gy, x.gm - 1, x.gd) > cutoff);
+      this._setPersonalEvents(list);
+
       this._addEventFormOpen = false;
       this._activeCalBtn = null;
+      this._editingEvent = null;
       this.setBottomBarText(_('رویداد ذخیره شد ✓'));
       if (this.googleSync) this.googleSync.requestRange();
       this._update();
@@ -381,6 +515,7 @@ export class Calendar {
 
     // Reusable events generator
     let eventChecker = new Events.Events(iterObj, this.schema, this.googleSync);
+    let personalAll = this._getPersonalEvents();
 
     while (true) {
       eventChecker.todayObj = iterObj;
@@ -427,6 +562,11 @@ export class Calendar {
         selectedDateEvents = events;
       }
       if (isHoliday) dayButton.add_style_class_name('holiday');
+
+      // Dot marker: only personal/Google events (official events would mark almost every day)
+      let hasUserEvents = events[0].some(e => e.type === 'google') ||
+        personalAll.some(p => p.gy === iterObj.gregorianYear && p.gm === iterObj.gregorianMonth && p.gd === iterObj.gregorianDay);
+      if (hasUserEvents) dayButton.add_style_class_name('has-events');
 
       let iterObj_julianDay = iterObj.julianDay;
       dayButton.connect('clicked', () => {
@@ -603,7 +743,14 @@ export class Calendar {
         _scrollBox.add_child(_eventsBox);
       }
 
-      if (selectedDateEvents[0].length === 0) {
+      let selPersonal = this._personalEventsForDay(
+        this._selectedDateObj.gregorianYear,
+        this._selectedDateObj.gregorianMonth,
+        this._selectedDateObj.gregorianDay
+      );
+      let personalTitles = selPersonal.map(p => p.title);
+
+      if (selectedDateEvents[0].length === 0 && selPersonal.length === 0) {
         let emptyLabel = new St.Label({
           text: _('مناسبت یا رویدادی برای این روز ثبت نشده است.'),
           x_align: Clutter.ActorAlign.CENTER,
@@ -613,6 +760,10 @@ export class Calendar {
         _eventsBox.add_child(emptyLabel);
       } else {
         for (let evObj of selectedDateEvents[0]) {
+          // Skip EDS copies of personal events; they are rendered below with edit/delete controls
+          if (evObj.type === 'google' && personalTitles.some(t => evObj.event.includes('\u2066' + t + '\u2069'))) {
+            continue;
+          }
           let evItemBox = new St.BoxLayout({
             vertical: false,
             style_class: 'shcalendar-event-item' + (evObj.holiday ? ' holiday' : '')
@@ -638,6 +789,8 @@ export class Calendar {
           _eventsBox.add_child(evItemBox);
         }
       }
+
+      this._renderPersonalEventRows(_eventsBox, selPersonal);
 
       this._buildAddEventArea(_eventsBox);
 

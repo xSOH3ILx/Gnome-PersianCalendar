@@ -408,3 +408,29 @@
 .shcalendar-add-event-cancel:hover {
   background-color: alpha(currentColor, 0.16);
 }
+
+/* --- Personal event management & day markers (v1.2.0) --- */
+
+.shcalendar-day-button {
+  border-bottom: 2px solid transparent;
+}
+
+.shcalendar-day-button.has-events {
+  border-bottom: 2px solid #3584e4;
+}
+
+.shcalendar-event-mini-btn {
+  padding: 2px 7px;
+  margin: 0px 2px;
+  border-radius: 5px;
+  background-color: alpha(currentColor, 0.08);
+  font-size: 0.8em;
+}
+
+.shcalendar-event-mini-btn:hover {
+  background-color: alpha(currentColor, 0.16);
+}
+
+.shcalendar-event-mini-btn.danger:hover {
+  background-color: rgba(224, 27, 36, 0.35);
+}

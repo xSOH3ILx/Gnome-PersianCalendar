@@ -6,6 +6,66 @@ import persianEvents from './events/persianEvents.js';
 import gregorianEvents from './events/gregorianEvents.js';
 import oldPersianEvents from './events/oldPersianEvents.js';
 
+// ---- Extra events overlay (v1.2.0) ----
+// Additional events can be shipped or user-provided as JSON, without any code
+// change. Lookup order (first file found wins):
+//   1. $XDG_CONFIG_HOME/shamsi-calendar/extra-events.json
+//   2. <extension>/events/extra-events.json
+// Format (docs/EVENTS.md):
+//   { "persian"|"islamic"|"gregorian": { "M/D": [["title", isHoliday, shadi], ...] } }
+
+const _MODULE_DIR = GLib.path_get_dirname(GLib.filename_from_uri(import.meta.url)[0]);
+
+class ExtraEvents {
+  constructor(type, eventsMap) {
+    this.name = 'مناسبت‌های افزوده';
+    this.type = type;
+    this.events = [[], [], [], [], [], [], [], [], [], [], [], [], []];
+    for (let key in eventsMap) {
+      let parts = key.split('/').map(Number);
+      let m = parts[0];
+      let d = parts[1];
+      if (!m || !d || m < 1 || m > 12 || d < 1 || d > 31) continue;
+      let list = eventsMap[key];
+      if (!Array.isArray(list)) continue;
+      let entries = list
+        .filter(e => Array.isArray(e) && e.length >= 1)
+        .map(e => [String(e[0]), e[1] === true, Number(e[2] ?? 0)]);
+      if (entries.length === 0) continue;
+      let dayIsHoliday = entries.some(e => e[1]);
+      this.events[m][d] = [entries, dayIsHoliday];
+    }
+  }
+}
+
+let _extraEventsCache = null;
+
+function getExtraEvents() {
+  if (_extraEventsCache !== null) return _extraEventsCache;
+  _extraEventsCache = [];
+  let candidates = [
+    GLib.build_filenamev([GLib.get_user_config_dir(), 'shamsi-calendar', 'extra-events.json']),
+    GLib.build_filenamev([_MODULE_DIR, 'events', 'extra-events.json'])
+  ];
+  for (let path of candidates) {
+    try {
+      if (!GLib.file_test(path, GLib.FileTest.EXISTS)) continue;
+      let [ok, bytes] = GLib.file_get_contents(path);
+      if (!ok) continue;
+      let data = JSON.parse(new TextDecoder().decode(bytes));
+      for (let type of ['persian', 'islamic', 'gregorian']) {
+        if (data[type] && typeof data[type] === 'object') {
+          _extraEventsCache.push(new ExtraEvents(type, data[type]));
+        }
+      }
+      break; // first found wins (user config overrides bundled file)
+    } catch (e) {
+      console.error('ShamsiCalendar: failed to load extra events from', path, e);
+    }
+  }
+  return _extraEventsCache;
+}
+
 const CalendarServerIface = `<node>
   <interface name="org.gnome.Shell.CalendarServer">
     <method name="SetTimeRange">
@@ -154,6 +214,9 @@ export class Events {
     }
     if (this.schema.get_boolean('show-old-events')) {
       this._eventsList.push(new oldPersianEvents(Tarikh, this.todayObj));
+    }
+    for (let extra of getExtraEvents()) {
+      this._eventsList.push(extra);
     }
   }
 

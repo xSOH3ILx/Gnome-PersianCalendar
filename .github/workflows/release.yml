@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin zip
+
+      - name: Build extension package
+        run: |
+          glib-compile-schemas src/schemas
+          cd src
+          zip -r "../shamsi-calendar@gnome.scr.ir.shell-extension.zip" .
+
+      - name: Extract changelog for this version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v ver="[$VERSION]" '/^## \[/{p=index($0,ver)>0} p' CHANGELOG.md > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "See CHANGELOG.md" > RELEASE_NOTES.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: RELEASE_NOTES.md
+          files: shamsi-calendar@gnome.scr.ir.shell-extension.zip

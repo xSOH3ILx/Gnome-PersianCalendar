@@ -1,0 +1,6 @@
+{
+  "_readme": "رویدادهای افزودنی بدون تغییر کد. قالب هر کلید: «ماه/روز» و مقدار: آرایه‌ای از [عنوان، تعطیل (true/false)، شادی (1 شاد | 0 عادی | -1 عزا)]. راهنمای کامل: docs/EVENTS.md — نسخهٔ کاربری این فایل: ~/.config/shamsi-calendar/extra-events.json",
+  "persian": {},
+  "islamic": {},
+  "gregorian": {}
+}
