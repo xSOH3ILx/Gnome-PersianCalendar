@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Persian Calendar (Shamsi)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 08:49+0000\n"
+"POT-Creation-Date: 2026-09-02 07:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,79 +17,139 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/calendar.js:95 src/calendar.js:310
+#: src/calendar.js:101 src/calendar.js:480
 msgid "امروز"
 msgstr ""
 
-#: src/calendar.js:310
+#: src/calendar.js:135
+msgid "+ افزودن رویداد"
+msgstr ""
+
+#: src/calendar.js:150
+msgid "عنوان رویداد"
+msgstr ""
+
+#: src/calendar.js:160
+msgid "شروع (۰۹:۰۰)"
+msgstr ""
+
+#: src/calendar.js:166
+msgid "پایان (۱۰:۰۰)"
+msgstr ""
+
+#: src/calendar.js:176
+msgid "ساعت‌ها را خالی بگذارید تا رویداد تمام‌روز ثبت شود"
+msgstr ""
+
+#: src/calendar.js:181
+msgid "پیش‌فرض سیستم"
+msgstr ""
+
+#: src/calendar.js:183 src/calendar.js:190 src/calendar.js:228
+msgid "تقویم:"
+msgstr ""
+
+#: src/calendar.js:198
+msgid "ذخیره"
+msgstr ""
+
+#: src/calendar.js:199
+msgid "انصراف"
+msgstr ""
+
+#: src/calendar.js:252
+msgid "عنوان رویداد را وارد کنید"
+msgstr ""
+
+#: src/calendar.js:258
+msgid "قالب ساعت درست نیست (مثال: ۰۹:۳۰)"
+msgstr ""
+
+#: src/calendar.js:264
+msgid "ساعت پایان باید بعد از شروع باشد"
+msgstr ""
+
+#: src/calendar.js:269
+msgid "در حال ذخیره…"
+msgstr ""
+
+#: src/calendar.js:282
+msgid "رویداد ذخیره شد ✓"
+msgstr ""
+
+#: src/calendar.js:287
+msgid "خطا در ذخیرهٔ رویداد — جزئیات در journalctl"
+msgstr ""
+
+#: src/calendar.js:480
 msgid "روز پیش"
 msgstr ""
 
-#: src/calendar.js:310
+#: src/calendar.js:480
 msgid "روز بعد"
 msgstr ""
 
-#: src/calendar.js:339 src/calendar.js:563
+#: src/calendar.js:509 src/calendar.js:739
 msgid "هـ.ش"
 msgstr ""
 
-#: src/calendar.js:364 src/calendar.js:583
+#: src/calendar.js:534 src/calendar.js:759
 msgid "هـ.ق"
 msgstr ""
 
-#: src/calendar.js:400 src/prefs.js:120
+#: src/calendar.js:572 src/prefs.js:120
 msgid "مناسبت‌ها و رویدادها"
 msgstr ""
 
-#: src/calendar.js:401 src/prefs.js:120
+#: src/calendar.js:573 src/prefs.js:120
 msgid "تبدیل تاریخ"
 msgstr ""
 
-#: src/calendar.js:436
+#: src/calendar.js:608
 msgid "مناسبت یا رویدادی برای این روز ثبت نشده است."
 msgstr ""
 
-#: src/calendar.js:450 src/extension.js:201
+#: src/calendar.js:624 src/extension.js:201
 msgid "تعطیل"
 msgstr ""
 
-#: src/calendar.js:485
+#: src/calendar.js:661
 msgid "سال (مثال: ۱۴۰۴)"
 msgstr ""
 
-#: src/calendar.js:491
+#: src/calendar.js:667
 msgid "ماه (۱-۱۲)"
 msgstr ""
 
-#: src/calendar.js:497
+#: src/calendar.js:673
 msgid "روز (۱-۳۱)"
 msgstr ""
 
-#: src/calendar.js:547
+#: src/calendar.js:723
 msgid "تاریخ وارد شده در تقویم معتبر نیست!"
 msgstr ""
 
-#: src/calendar.js:572
+#: src/calendar.js:748
 msgid "میلادی"
 msgstr ""
 
-#: src/calendar.js:595
+#: src/calendar.js:772
 msgid "کپی"
 msgstr ""
 
-#: src/calendar.js:608
+#: src/calendar.js:785
 msgid "رفتن به این تاریخ در تقویم"
 msgstr ""
 
-#: src/calendar.js:621
+#: src/calendar.js:798
 msgid "از شمسی"
 msgstr ""
 
-#: src/calendar.js:622
+#: src/calendar.js:799
 msgid "از میلادی"
 msgstr ""
 
-#: src/calendar.js:623
+#: src/calendar.js:800
 msgid "از قمری"
 msgstr ""
 

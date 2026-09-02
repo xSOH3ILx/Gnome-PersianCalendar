@@ -7,6 +7,7 @@ import { gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.j
 import { Str } from './otherFunctions.js';
 import * as Tarikh from './Tarikh.js';
 import * as Events from './Events.js';
+import * as EDS from './EDS.js';
 
 export class Calendar {
 
@@ -39,6 +40,10 @@ export class Calendar {
 
     this._selectedDateObj = new Tarikh.TarikhObject();
     this._rtl = (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL);
+    this._addEventFormOpen = false;
+    this._edsCalendars = null;
+    this._edsCalIndex = 0;
+    this._activeCalBtn = null;
     let defaultTab = this.schema.get_string('default-tab');
     this._selectedTab = (defaultTab === 'prayTimes') ? 'events' : defaultTab;
 
@@ -46,7 +51,8 @@ export class Calendar {
 
     if (this.googleSync) {
       this._syncListener = () => {
-        this._update();
+        // Don't rebuild the UI while the user is typing in the add-event form
+        if (!this._addEventFormOpen) this._update();
       };
       this.googleSync.addListener(this._syncListener);
     }
@@ -116,6 +122,170 @@ export class Calendar {
   _onTodayButtonClicked = () => {
     this._selectedDateObj.julianDay = new Tarikh.TarikhObject().julianDay;
     this._update();
+  }
+
+  // --- Personal events (v1.1.0) ---
+
+  _buildAddEventArea = (parentBox) => {
+    let addBox = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-add-event-container' });
+    addBox.set_text_direction(Clutter.TextDirection.RTL);
+
+    if (!this._addEventFormOpen) {
+      let addBtn = new St.Button({
+        label: _('+ افزودن رویداد'),
+        style_class: 'shcalendar-add-event-btn',
+        x_expand: true
+      });
+      addBtn.connect('clicked', () => {
+        this._addEventFormOpen = true;
+        this._loadEdsCalendars();
+        this._update();
+      });
+      addBox.add_child(addBtn);
+    } else {
+      let form = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-add-event-form' });
+      form.set_text_direction(Clutter.TextDirection.RTL);
+
+      let titleEntry = new St.Entry({
+        hint_text: _('عنوان رویداد'),
+        can_focus: true,
+        x_expand: true,
+        style_class: 'shcalendar-converter-entry'
+      });
+      form.add_child(titleEntry);
+
+      let timeRow = new St.BoxLayout({ style_class: 'shcalendar-add-event-times' });
+      timeRow.set_text_direction(Clutter.TextDirection.RTL);
+      let startEntry = new St.Entry({
+        hint_text: _('شروع (۰۹:۰۰)'),
+        can_focus: true,
+        x_expand: true,
+        style_class: 'shcalendar-converter-entry'
+      });
+      let endEntry = new St.Entry({
+        hint_text: _('پایان (۱۰:۰۰)'),
+        can_focus: true,
+        x_expand: true,
+        style_class: 'shcalendar-converter-entry'
+      });
+      timeRow.add_child(startEntry);
+      timeRow.add_child(endEntry);
+      form.add_child(timeRow);
+
+      let timeHint = new St.Label({
+        text: _('ساعت‌ها را خالی بگذارید تا رویداد تمام‌روز ثبت شود'),
+        style_class: 'shcalendar-add-event-hint'
+      });
+      form.add_child(timeHint);
+
+      let calName = this._edsCalendars?.[this._edsCalIndex]?.name ?? _('پیش‌فرض سیستم');
+      let calBtn = new St.Button({
+        label: _('تقویم:') + ' ' + calName,
+        style_class: 'shcalendar-add-event-cal',
+        x_expand: true
+      });
+      calBtn.connect('clicked', () => {
+        if (this._edsCalendars && this._edsCalendars.length > 1) {
+          this._edsCalIndex = (this._edsCalIndex + 1) % this._edsCalendars.length;
+          calBtn.set_label(_('تقویم:') + ' ' + this._edsCalendars[this._edsCalIndex].name);
+        }
+      });
+      this._activeCalBtn = calBtn;
+      form.add_child(calBtn);
+
+      let btnRow = new St.BoxLayout({ style_class: 'shcalendar-add-event-actions' });
+      btnRow.set_text_direction(Clutter.TextDirection.RTL);
+      let saveBtn = new St.Button({ label: _('ذخیره'), style_class: 'shcalendar-add-event-save', x_expand: true });
+      let cancelBtn = new St.Button({ label: _('انصراف'), style_class: 'shcalendar-add-event-cancel', x_expand: true });
+      btnRow.add_child(saveBtn);
+      btnRow.add_child(cancelBtn);
+      form.add_child(btnRow);
+
+      saveBtn.connect('clicked', () => {
+        this._savePersonalEvent(titleEntry.get_text(), startEntry.get_text(), endEntry.get_text());
+      });
+      cancelBtn.connect('clicked', () => {
+        this._addEventFormOpen = false;
+        this._activeCalBtn = null;
+        this._update();
+      });
+
+      addBox.add_child(form);
+    }
+
+    parentBox.add_child(addBox);
+  }
+
+  _loadEdsCalendars = () => {
+    if (this._edsCalendars) return;
+    EDS.listCalendars().then(cals => {
+      if (cals.length === 0) return;
+      this._edsCalendars = cals;
+      let idx = cals.findIndex(c => c.uid === 'system-calendar');
+      this._edsCalIndex = idx >= 0 ? idx : 0;
+      // Update the open form's calendar button in place (no rebuild, keeps typed text)
+      if (this._activeCalBtn) {
+        this._activeCalBtn.set_label(_('تقویم:') + ' ' + cals[this._edsCalIndex].name);
+      }
+    }).catch(e => {
+      console.error('ShamsiCalendar: EDS listCalendars failed:', e);
+    });
+  }
+
+  _parseTimeText = (txt) => {
+    txt = (txt ?? '').trim();
+    if (txt === '') return null;
+    txt = txt
+      .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+      .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+    let m = txt.match(/^(\d{1,2})(?:[:.،](\d{1,2}))?$/);
+    if (!m) return NaN;
+    let h = parseInt(m[1], 10);
+    let mi = m[2] !== undefined ? parseInt(m[2], 10) : 0;
+    if (h > 23 || mi > 59) return NaN;
+    return h * 60 + mi;
+  }
+
+  _savePersonalEvent = (title, startTxt, endTxt) => {
+    title = (title ?? '').trim();
+    if (title === '') {
+      this.setBottomBarText(_('عنوان رویداد را وارد کنید'));
+      return;
+    }
+    let startMin = this._parseTimeText(startTxt);
+    let endMin = this._parseTimeText(endTxt);
+    if (Number.isNaN(startMin) || Number.isNaN(endMin)) {
+      this.setBottomBarText(_('قالب ساعت درست نیست (مثال: ۰۹:۳۰)'));
+      return;
+    }
+    if (startMin === null && endMin !== null) startMin = Math.max(0, endMin - 60);
+    if (startMin !== null && endMin === null) endMin = Math.min(23 * 60 + 59, startMin + 60);
+    if (startMin !== null && endMin <= startMin) {
+      this.setBottomBarText(_('ساعت پایان باید بعد از شروع باشد'));
+      return;
+    }
+
+    let calUid = this._edsCalendars?.[this._edsCalIndex]?.uid ?? 'system-calendar';
+    this.setBottomBarText(_('در حال ذخیره…'));
+
+    EDS.createEvent({
+      calUid,
+      summary: title,
+      gy: this._selectedDateObj.gregorianYear,
+      gm: this._selectedDateObj.gregorianMonth,
+      gd: this._selectedDateObj.gregorianDay,
+      startMin,
+      endMin
+    }).then(() => {
+      this._addEventFormOpen = false;
+      this._activeCalBtn = null;
+      this.setBottomBarText(_('رویداد ذخیره شد ✓'));
+      if (this.googleSync) this.googleSync.requestRange();
+      this._update();
+    }).catch(e => {
+      console.error('ShamsiCalendar: createEvent failed:', e);
+      this.setBottomBarText(_('خطا در ذخیرهٔ رویداد — جزئیات در journalctl'));
+    });
   }
 
   _onPrevMonthButtonClicked = () => {
@@ -395,6 +565,8 @@ export class Calendar {
     let _tabContainer = new St.BoxLayout({
       style_class: 'shcalendar-tab-bar'
     });
+    // Persian UI: first tab belongs on the right, regardless of system locale
+    _tabContainer.set_text_direction(Clutter.TextDirection.RTL);
 
     let tabs = {
       events: _('مناسبت‌ها و رویدادها'),
@@ -445,6 +617,8 @@ export class Calendar {
             vertical: false,
             style_class: 'shcalendar-event-item' + (evObj.holiday ? ' holiday' : '')
           });
+          // Persian UI: badge sits to the right of the text, regardless of system locale
+          evItemBox.set_text_direction(Clutter.TextDirection.RTL);
 
           let evBadge = new St.Label({
             text: evObj.holiday ? _('تعطیل') : (evObj.symbol ?? '•'),
@@ -464,6 +638,8 @@ export class Calendar {
           _eventsBox.add_child(evItemBox);
         }
       }
+
+      this._buildAddEventArea(_eventsBox);
 
     } else if (this._selectedTab === 'dateConvert') {
       let _converterRoot = new St.BoxLayout({ vertical: true, style_class: 'shcalendar-converter-container' });
@@ -590,6 +766,7 @@ export class Calendar {
 
         results.forEach(res => {
           let row = new St.BoxLayout({ style_class: 'shcalendar-convert-row' });
+          row.set_text_direction(Clutter.TextDirection.RTL);
           let lbl = new St.Label({ text: res.label, x_expand: true, style_class: 'shcalendar-convert-label' });
           let copyBtn = new St.Button({
             label: _('کپی'),

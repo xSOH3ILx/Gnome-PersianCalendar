@@ -330,3 +330,81 @@
 .shcalendar-today-button:active {
   background-color: rgba(255, 255, 255, 0.3);
 }
+
+/* --- Add personal event (v1.1.0) --- */
+
+.shcalendar-add-event-container {
+  margin-top: 8px;
+}
+
+.shcalendar-add-event-btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid alpha(currentColor, 0.25);
+  background-color: alpha(currentColor, 0.04);
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.shcalendar-add-event-btn:hover {
+  background-color: alpha(currentColor, 0.1);
+}
+
+.shcalendar-add-event-form {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: alpha(currentColor, 0.05);
+  border: 1px solid alpha(currentColor, 0.08);
+  spacing: 6px;
+}
+
+.shcalendar-add-event-times {
+  spacing: 6px;
+}
+
+.shcalendar-add-event-hint {
+  font-size: 0.8em;
+  opacity: 0.6;
+  text-align: right;
+}
+
+.shcalendar-add-event-cal {
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: alpha(currentColor, 0.08);
+  font-size: 0.85em;
+  text-align: right;
+}
+
+.shcalendar-add-event-cal:hover {
+  background-color: alpha(currentColor, 0.14);
+}
+
+.shcalendar-add-event-actions {
+  spacing: 6px;
+  margin-top: 4px;
+}
+
+.shcalendar-add-event-save {
+  padding: 5px 10px;
+  border-radius: 6px;
+  background-color: #3584e4;
+  color: #ffffff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.shcalendar-add-event-save:hover {
+  background-color: #4a90e8;
+}
+
+.shcalendar-add-event-cancel {
+  padding: 5px 10px;
+  border-radius: 6px;
+  background-color: alpha(currentColor, 0.1);
+  text-align: center;
+}
+
+.shcalendar-add-event-cancel:hover {
+  background-color: alpha(currentColor, 0.16);
+}

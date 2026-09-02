@@ -17,6 +17,7 @@ pack: schemas
 		--extra-source=Tarikh.js \
 		--extra-source=otherFunctions.js \
 		--extra-source=tahvil.js \
+		--extra-source=EDS.js \
 		--extra-source=events \
 		--out-dir=$(BUILD) $(SRC)
 
