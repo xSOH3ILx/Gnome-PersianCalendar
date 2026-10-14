@@ -53,3 +53,38 @@ test('daysOfMonth_persian: Esfand length depends on leap year', () => {
   assert.equal(Tarikh.daysOfMonth_persian(1404, 12), 29);
   assert.equal(Tarikh.daysOfMonth_persian(1405, 1), 31);
 });
+
+test('strict validators reject overflow, fractional values and numeric strings', () => {
+  assert.equal(Tarikh.check_gregorian(2025, 2, 29, true), false);
+  assert.equal(Tarikh.check_islamic(1448, 2, 30, true), false);
+  for (let check of [Tarikh.check_persian, Tarikh.check_gregorian, Tarikh.check_islamic]) {
+    assert.equal(check(1405, 1, 1.5, true), false);
+    assert.equal(check('1405', 1, 1, true), false);
+  }
+});
+
+test('local timestamps, midnight and date setters agree in Tehran, UTC and New York', () => {
+  const previousTimezone = process.env.TZ;
+  const T = Tarikh;
+  const verify = () => {
+    let stamp = new Date(2026,9,14,0,30,0,123).getTime();
+    assert.deepEqual(T.timeStamp_to_gregorian(stamp), [2026,10,14]);
+    assert.deepEqual(T.timeStamp_to_persian(stamp), T.timeStamp_to_all(stamp).persian);
+    assert.deepEqual(T.timeStamp_to_islamic(stamp), T.timeStamp_to_all(stamp).islamic);
+    let o = new T.TarikhObject(stamp); o.julianDay = T.gregorian_to_julianDay(2026,10,14);
+    assert.deepEqual(T.timeStamp_to_gregorian(o.timeStamp), o.gregorian);
+    o.time=[0,0,0,0]; assert.equal(new Date(o.timeStamp).getHours(),0);
+    o.gregorian=[2026,10,15]; assert.deepEqual(o.time,[0,0,0,0]);
+    assert.deepEqual(T.timeStamp_to_gregorian(o.timeStamp),o.gregorian);
+    assert.equal(new Date(T.julianDay_to_timeStamp(o.julianDay,[0,0,0,0])).getHours(),0);
+  };
+  try {
+    for (const timezone of ['Asia/Tehran', 'UTC', 'America/New_York']) {
+      process.env.TZ = timezone;
+      verify();
+    }
+  } finally {
+    if (previousTimezone === undefined) delete process.env.TZ;
+    else process.env.TZ = previousTimezone;
+  }
+});

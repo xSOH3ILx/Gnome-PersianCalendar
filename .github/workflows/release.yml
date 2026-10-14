@@ -13,9 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint and unit tests
+        run: npm run lint && npm test
 
       - name: Install build tools
-        run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin zip
+        run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin zip gjs dbus
+      - name: EDS D-Bus contract tests
+        run: npm run test:gjs
 
       - name: Build extension package
         run: |

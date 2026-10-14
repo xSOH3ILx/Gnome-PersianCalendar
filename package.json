@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "lint": "eslint src",
-    "test": "node --test"
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "test:gjs": "GIO_USE_VFS=local TZ=Asia/Tehran dbus-run-session -- gjs -m tests/gjs/eds.js"
   },
   "devDependencies": {
     "eslint": "^9.0.0"

@@ -14,13 +14,15 @@ jobs:
         with:
           node-version: 22
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Lint
         run: npx eslint src
       - name: Unit tests
-        run: node --test
+        run: npm test
       - name: Install GLib tools and gettext
-        run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin gettext zip
+        run: sudo apt-get update && sudo apt-get install -y libglib2.0-bin gettext zip gjs dbus
+      - name: EDS D-Bus contract tests
+        run: npm run test:gjs
       - name: Compile schemas
         run: glib-compile-schemas src/schemas
       - name: Validate translatable strings

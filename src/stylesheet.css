@@ -15,11 +15,12 @@
 
 .shcalendar-actor-left {
   margin: 6px;
-  background-color: alpha(currentColor, 0.04);
-  border: 1px solid alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.1);
+  border: 1px solid rgba(128, 128, 128, 0.2);
   border-radius: 12px;
   padding: 12px;
   min-width: 280px;
+  max-width: 360px;
 }
 
 /* Header & Month Navigation */
@@ -33,16 +34,16 @@
   min-height: 32px;
   padding: 4px;
   border-radius: 8px;
-  background-color: alpha(currentColor, 0.05);
-  border: 1px solid alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.125);
+  border: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 .shcalendar-nav-button:hover {
-  background-color: alpha(currentColor, 0.12);
+  background-color: rgba(128, 128, 128, 0.3);
 }
 
 .shcalendar-nav-button:active {
-  background-color: alpha(currentColor, 0.2);
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
 .shcalendar-month-label {
@@ -73,16 +74,16 @@
 }
 
 .shcalendar-day-button:hover {
-  background-color: alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.2);
 }
 
 .shcalendar-day-button.today {
-  border: 1.5px solid #3584e4;
-  background-color: alpha(#3584e4, 0.12);
+  border: 1.5px solid #2462a7;
+  background-color: rgba(36, 98, 167, 0.12);
 }
 
 .shcalendar-day-button.selected {
-  background-color: #3584e4;
+  background-color: #2462a7;
   color: #ffffff;
 }
 
@@ -109,14 +110,14 @@
 }
 
 .shcalendar-hdate-day-txt {
-  font-size: 0.65em;
-  opacity: 0.55;
+  font-size: 0.8em;
+  opacity: 0.8;
   text-align: center;
 }
 
 .shcalendar-gdate-day-txt {
-  font-size: 0.65em;
-  opacity: 0.55;
+  font-size: 0.8em;
+  opacity: 0.8;
   text-align: center;
 }
 
@@ -126,6 +127,7 @@
 }
 
 .shcalendar-card-header {
+  text-align: right;
   font-size: 1.05em;
   font-weight: 700;
   opacity: 0.8;
@@ -133,13 +135,14 @@
 }
 
 .shcalendar-card-pdate {
+  text-align: right;
   font-size: 1.35em;
   font-weight: 800;
-  color: #3584e4;
   padding-bottom: 4px;
 }
 
 .shcalendar-card-subdates {
+  text-align: right;
   font-size: 0.85em;
   opacity: 0.7;
   padding-bottom: 10px;
@@ -147,6 +150,10 @@
 
 .shcalendar-card-sep {
   opacity: 0.35;
+}
+
+.shcalendar-card-hdate, .shcalendar-card-gdate {
+  text-align: right;
 }
 
 /* Tabs Bar */
@@ -160,16 +167,16 @@
   border-radius: 8px;
   font-size: 0.9em;
   font-weight: 600;
-  background-color: alpha(currentColor, 0.05);
-  border: 1px solid alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.125);
+  border: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 .shcalendar-tab-button:hover {
-  background-color: alpha(currentColor, 0.1);
+  background-color: rgba(128, 128, 128, 0.25);
 }
 
 .shcalendar-tab-button.active {
-  background-color: #3584e4;
+  background-color: #2462a7;
   color: #ffffff;
   border-color: transparent;
 }
@@ -187,14 +194,14 @@
 .shcalendar-event-item {
   padding: 6px 10px;
   border-radius: 8px;
-  background-color: alpha(currentColor, 0.04);
-  border: 1px solid alpha(currentColor, 0.06);
+  background-color: rgba(128, 128, 128, 0.1);
+  border: 1px solid rgba(128, 128, 128, 0.15);
   spacing: 8px;
 }
 
 .shcalendar-event-item.holiday {
-  background-color: alpha(#e01b24, 0.08);
-  border: 1px solid alpha(#e01b24, 0.2);
+  background-color: rgba(224, 27, 36, 0.08);
+  border: 1px solid rgba(224, 27, 36, 0.2);
 }
 
 .shcalendar-event-badge {
@@ -202,7 +209,7 @@
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 6px;
-  background-color: alpha(currentColor, 0.1);
+  background-color: rgba(128, 128, 128, 0.25);
 }
 
 .shcalendar-event-badge.holiday {
@@ -226,6 +233,7 @@
 }
 
 .shcalendar-empty-event-label {
+  text-align: right;
   font-size: 0.9em;
   opacity: 0.55;
   padding: 20px 0;
@@ -244,11 +252,11 @@
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.85em;
-  background-color: alpha(currentColor, 0.05);
+  background-color: rgba(128, 128, 128, 0.125);
 }
 
 .shcalendar-converter-type-btn.active {
-  background-color: #3584e4;
+  background-color: #2462a7;
   color: #ffffff;
 }
 
@@ -257,10 +265,11 @@
 }
 
 .shcalendar-converter-entry {
+  text-align: right;
   padding: 4px 8px;
   border-radius: 6px;
-  background-color: alpha(currentColor, 0.06);
-  border: 1px solid alpha(currentColor, 0.12);
+  background-color: rgba(128, 128, 128, 0.15);
+  border: 1px solid rgba(128, 128, 128, 0.3);
   font-size: 0.95em;
 }
 
@@ -272,7 +281,7 @@
 .shcalendar-convert-row {
   padding: 6px 8px;
   border-radius: 6px;
-  background-color: alpha(currentColor, 0.04);
+  background-color: rgba(128, 128, 128, 0.1);
   spacing: 6px;
 }
 
@@ -280,14 +289,15 @@
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.82em;
-  background-color: alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.2);
 }
 
 .shcalendar-copy-btn:hover, .shcalendar-jump-btn:hover {
-  background-color: alpha(currentColor, 0.16);
+  background-color: rgba(128, 128, 128, 0.4);
 }
 
 .shcalendar-converter-error {
+  text-align: right;
   color: #e01b24;
   font-size: 0.88em;
   padding: 8px 0;
@@ -302,33 +312,35 @@
 .shcalendar-btn {
   padding: 6px 10px;
   border-radius: 8px;
-  background-color: alpha(currentColor, 0.05);
-  border: 1px solid alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.125);
+  border: 1px solid rgba(128, 128, 128, 0.2);
 }
 
 .shcalendar-btn:hover {
-  background-color: alpha(currentColor, 0.12);
+  background-color: rgba(128, 128, 128, 0.3);
 }
 
 .shcalendar-bottom-label {
   font-size: 0.88em;
   opacity: 0.75;
+  max-width: 540px;
+  text-align: right;
 }
 
 .shcalendar-today-button {
   padding: 4px 12px;
   margin: 0 4px;
   border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(128, 128, 128, 0.25);
   font-size: 0.9em;
 }
 
 .shcalendar-today-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
 .shcalendar-today-button:active {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(128, 128, 128, 0.75);
 }
 
 /* --- Add personal event (v1.1.0) --- */
@@ -340,21 +352,21 @@
 .shcalendar-add-event-btn {
   padding: 6px 10px;
   border-radius: 8px;
-  border: 1px solid alpha(currentColor, 0.25);
-  background-color: alpha(currentColor, 0.04);
+  border: 1px solid rgba(128, 128, 128, 0.625);
+  background-color: rgba(128, 128, 128, 0.1);
   font-size: 0.9em;
   text-align: center;
 }
 
 .shcalendar-add-event-btn:hover {
-  background-color: alpha(currentColor, 0.1);
+  background-color: rgba(128, 128, 128, 0.25);
 }
 
 .shcalendar-add-event-form {
   padding: 8px;
   border-radius: 8px;
-  background-color: alpha(currentColor, 0.05);
-  border: 1px solid alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.125);
+  border: 1px solid rgba(128, 128, 128, 0.2);
   spacing: 6px;
 }
 
@@ -371,13 +383,13 @@
 .shcalendar-add-event-cal {
   padding: 4px 8px;
   border-radius: 6px;
-  background-color: alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.2);
   font-size: 0.85em;
   text-align: right;
 }
 
 .shcalendar-add-event-cal:hover {
-  background-color: alpha(currentColor, 0.14);
+  background-color: rgba(128, 128, 128, 0.35);
 }
 
 .shcalendar-add-event-actions {
@@ -388,7 +400,7 @@
 .shcalendar-add-event-save {
   padding: 5px 10px;
   border-radius: 6px;
-  background-color: #3584e4;
+  background-color: #2462a7;
   color: #ffffff;
   font-weight: 700;
   text-align: center;
@@ -401,34 +413,47 @@
 .shcalendar-add-event-cancel {
   padding: 5px 10px;
   border-radius: 6px;
-  background-color: alpha(currentColor, 0.1);
+  background-color: rgba(128, 128, 128, 0.25);
   text-align: center;
 }
 
 .shcalendar-add-event-cancel:hover {
-  background-color: alpha(currentColor, 0.16);
+  background-color: rgba(128, 128, 128, 0.4);
 }
 
 /* --- Personal event management & day markers (v1.2.0) --- */
 
-.shcalendar-day-button {
-  border-bottom: 2px solid transparent;
+.shcalendar-event-dot {
+  color: #2462a7;
+  font-size: 0.55em;
 }
 
-.shcalendar-day-button.has-events {
-  border-bottom: 2px solid #3584e4;
+.shcalendar-day-button.selected .shcalendar-event-dot {
+  color: #ffffff;
+}
+
+.shcalendar-day-button:focus,
+.shcalendar-nav-button:focus,
+.shcalendar-tab-button:focus {
+  box-shadow: inset 0 0 0 2px rgba(128, 128, 128, 1);
+}
+
+.shcalendar-sync-status {
+  text-align: right;
+  font-size: 0.9em;
+  padding: 6px;
 }
 
 .shcalendar-event-mini-btn {
   padding: 2px 7px;
   margin: 0px 2px;
   border-radius: 5px;
-  background-color: alpha(currentColor, 0.08);
+  background-color: rgba(128, 128, 128, 0.2);
   font-size: 0.8em;
 }
 
 .shcalendar-event-mini-btn:hover {
-  background-color: alpha(currentColor, 0.16);
+  background-color: rgba(128, 128, 128, 0.4);
 }
 
 .shcalendar-event-mini-btn.danger:hover {

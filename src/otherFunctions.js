@@ -1,5 +1,16 @@
 export const Str = {
 
+  toEnglishDigits: (text) => String(text)
+    .replace(/[۰-۹]/g, d => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
+    .replace(/[٠-٩]/g, d => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))),
+
+  parseInteger: (text) => {
+    const value = Str.toEnglishDigits(text).trim();
+    return /^\d+$/.test(value) ? Number(value) : NaN;
+  },
+
+  bidiIsolate: (text, direction = 'auto') => `${direction === 'ltr' ? '\u2066' : '\u2068'}${text}\u2069`,
+
   numbersFormat: (str, out = 'fa') => {
     let enums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     let pnums = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];

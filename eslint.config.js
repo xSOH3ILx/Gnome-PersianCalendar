@@ -6,6 +6,7 @@ export default [
       sourceType: 'module',
     },
     rules: {
+      'no-dupe-keys': 'error',
       'no-undef': 'off',
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       eqeqeq: 'warn',

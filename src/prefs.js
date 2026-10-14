@@ -2,7 +2,6 @@ import Adw from 'gi://Adw';
 import Gtk from 'gi://Gtk';
 import Gio from 'gi://Gio';
 import Gdk from 'gi://Gdk';
-import GObject from 'gi://GObject';
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 import { Str } from './otherFunctions.js';
@@ -10,6 +9,7 @@ import * as Tarikh from './Tarikh.js';
 
 export default class ShamsiCalendarPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window) {
+    window.set_direction(Gtk.TextDirection.RTL);
     window.set_default_size(680, 600);
     new App(window, this.getSettings(), this.path, this.metadata);
   }
@@ -27,6 +27,14 @@ class App {
     this._buildEventsPage();
     this._buildWeekPage();
     this._buildAboutPage();
+    this._setDirection(window);
+  }
+
+  _setDirection(widget) {
+    widget.set_direction(Gtk.TextDirection.RTL);
+    for (let child = widget.get_first_child(); child; child = child.get_next_sibling()) {
+      this._setDirection(child);
+    }
   }
 
   _buildGeneralPage() {
@@ -185,6 +193,16 @@ class App {
     });
     this.schema.bind('enable-google-calendar', googleSyncRow, 'active', Gio.SettingsBindFlags.DEFAULT);
     googleGroup.add(googleSyncRow);
+    let accountsRow = new Adw.ActionRow({
+      title: _('تنظیم حساب‌های آنلاین گنوم'),
+      subtitle: _('حساب گوگل را اضافه کنید و دسترسی تقویم را روشن کنید'),
+      activatable: true
+    });
+    accountsRow.add_suffix(new Gtk.Image({ icon_name: 'adw-external-link-symbolic' }));
+    accountsRow.connect('activated', () => {
+      Gio.Subprocess.new(['gnome-control-center', 'online-accounts'], Gio.SubprocessFlags.NONE);
+    });
+    googleGroup.add(accountsRow);
 
     // Group 2: Official Holidays & Events
     let eventsGroup = new Adw.PreferencesGroup({

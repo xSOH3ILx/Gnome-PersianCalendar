@@ -5,6 +5,7 @@ import islamicEvents from './events/islamicEvents.js';
 import persianEvents from './events/persianEvents.js';
 import gregorianEvents from './events/gregorianEvents.js';
 import oldPersianEvents from './events/oldPersianEvents.js';
+import { Str } from './otherFunctions.js';
 
 // ---- Extra events overlay (v1.2.0) ----
 // Additional events can be shipped or user-provided as JSON, without any code
@@ -79,6 +80,9 @@ const CalendarServerIface = `<node>
     <signal name="EventsRemoved">
       <arg type="as" name="ids"/>
     </signal>
+    <signal name="ClientDisappeared">
+      <arg type="s" name="source_uid"/>
+    </signal>
     <property name="HasCalendars" type="b" access="read"/>
     <property name="Since" type="x" access="read"/>
     <property name="Until" type="x" access="read"/>
@@ -94,6 +98,13 @@ export class GoogleCalendarSync {
     this._events = new Map(); // id -> { id, summary, startTime, endTime, extras }
     this._listeners = new Set();
     this._initialized = false;
+    this._destroyed = false;
+    this._cancellable = new Gio.Cancellable();
+    this._eventsByDay = null;
+    this._range = null;
+    this._requestSerial = 0;
+    this.state = 'loading';
+    this.revision = 0;
     this._initProxy();
   }
 
@@ -102,48 +113,115 @@ export class GoogleCalendarSync {
       this._proxy = new CalendarServerProxy(
         Gio.DBus.session,
         'org.gnome.Shell.CalendarServer',
-        '/org/gnome/Shell/CalendarServer'
+        '/org/gnome/Shell/CalendarServer',
+        (proxy, error) => {
+          if (this._destroyed) return;
+          if (error) {
+            this.state = 'error';
+            this._notifyListeners();
+            console.error('ShamsiCalendar: calendar connection failed:', error);
+            return;
+          }
+          this._initialized = true;
+          this._connectProxy(proxy);
+          this.requestRange(null, null, true);
+        },
+        this._cancellable
       );
-
-      this._signalId = this._proxy.connectSignal('EventsAddedOrUpdated', (proxy, sender, [events]) => {
-        for (let ev of events) {
-          // signature: (id, summary, startTime, endTime, extras)
-          this._events.set(ev[0], {
-            id: ev[0],
-            summary: ev[1],
-            startTime: Number(ev[2]),
-            endTime: Number(ev[3]),
-            extras: ev[4]
-          });
-        }
-        this._notifyListeners();
-      });
-
-      this._removedSignalId = this._proxy.connectSignal('EventsRemoved', (proxy, sender, [ids]) => {
-        for (let id of ids) {
-          this._events.delete(id);
-        }
-        this._notifyListeners();
-      });
-
-      this.requestRange();
     } catch (e) {
+      this.state = 'error';
       console.error('ShamsiCalendar: Error initializing CalendarServerProxy:', e);
     }
   }
 
-  requestRange() {
-    if (!this._proxy) return;
-    try {
-      let now = Math.floor(Date.now() / 1000);
-      let since = now - 86400 * 60; // 60 days past
-      let until = now + 86400 * 90; // 90 days future
-      this._proxy.SetTimeRangeRemote(since, until, true, (res, err) => {
-        if (err) {
-          // calendar server might be inactive or starting up
+  _connectProxy(proxy) {
+    this._signalId = proxy.connectSignal('EventsAddedOrUpdated', (proxy, sender, [events]) => {
+      let handled = new Set();
+      for (let ev of events) {
+        let prefix = ev[0].slice(0, ev[0].lastIndexOf('\n') + 1);
+        if (!ev[0].endsWith('\n') && !handled.has(prefix)) {
+          this._removeMatching(prefix);
+          handled.add(prefix);
         }
-      });
+        // signature: (id, summary, startTime, endTime, extras)
+        this._events.set(ev[0], {
+          id: ev[0],
+          summary: ev[1],
+          startTime: Number(ev[2]),
+          endTime: Number(ev[3]),
+          extras: ev[4]
+        });
+      }
+      this._eventsByDay = null;
+      this.revision++;
+      this._notifyListeners({ updated: events.map(e => this._events.get(e[0])) });
+    });
+
+    this._removedSignalId = proxy.connectSignal('EventsRemoved', (proxy, sender, [ids]) => {
+      for (let id of ids) this._removeMatching(id);
+      this._notifyListeners({ removed: ids });
+    });
+    this._clientSignalId = proxy.connectSignal('ClientDisappeared', (proxy, sender, [uid]) => {
+      this._removeMatching(uid + '\n');
+      this._notifyListeners();
+    });
+    this._ownerSignalId = proxy.connect('notify::g-name-owner', () => {
+      this._events.clear();
+      this._eventsByDay = null;
+      this.revision++;
+      this._requestSerial++;
+      if (proxy.g_name_owner) this.requestRange(null, null, true);
+      else {
+        this.state = 'unavailable';
+        this._notifyListeners();
+      }
+    });
+    this._propertiesSignalId = proxy.connect('g-properties-changed', () => this._notifyListeners());
+  }
+
+  _removeMatching(prefix) {
+    for (let id of this._events.keys()) {
+      if (id.startsWith(prefix)) this._events.delete(id);
+    }
+    this._eventsByDay = null;
+    this.revision++;
+  }
+
+  requestRange(since = null, until = null, force = false) {
+    if (this._destroyed) return;
+    if (since === null || until === null) {
+      let now = new Date();
+      [since, until] = this._range ?? [
+        new Date(now.getFullYear(), now.getMonth(), 1).getTime() / 1000,
+        new Date(now.getFullYear(), now.getMonth() + 1, 1).getTime() / 1000
+      ];
+    }
+    let changed = !this._range || this._range[0] !== since || this._range[1] !== until;
+    this._range = [since, until];
+    if (!this._initialized && this.state === 'error') {
+      this._proxy?.run_dispose();
+      this.state = 'loading';
+      this._initProxy();
+      return;
+    }
+    if (!this._initialized || !this._proxy || (!changed && !force)) return;
+    if (changed || force) {
+      this._events.clear();
+      this._eventsByDay = null;
+      this.revision++;
+    }
+    const serial = ++this._requestSerial;
+    this.state = 'loading';
+    try {
+      this._proxy.SetTimeRangeRemote(since, until, true, (res, err) => {
+        if (this._destroyed || serial !== this._requestSerial) return;
+        this.state = err ? 'error' : (this._proxy.HasCalendars ? 'ready' : 'empty');
+        if (err) console.error('ShamsiCalendar: calendar range failed:', err);
+        this._notifyListeners();
+      }, this._cancellable);
     } catch (e) {
+      this.state = 'error';
+      this._notifyListeners();
       console.error('ShamsiCalendar: Error setting time range:', e);
     }
   }
@@ -156,10 +234,11 @@ export class GoogleCalendarSync {
     this._listeners.delete(fn);
   }
 
-  _notifyListeners() {
+  _notifyListeners(change = {}) {
+    if (this._destroyed) return;
     for (let fn of this._listeners) {
       try {
-        fn();
+          fn(change);
       } catch (e) {
         console.error('ShamsiCalendar: Error in calendar listener callback:', e);
       }
@@ -167,29 +246,44 @@ export class GoogleCalendarSync {
   }
 
   getEventsForDate(gregorianYear, gregorianMonth, gregorianDay) {
-    // gregorianMonth is 1-12
     let dayStart = Math.floor(new Date(gregorianYear, gregorianMonth - 1, gregorianDay, 0, 0, 0).getTime() / 1000);
-    let dayEnd = Math.floor(new Date(gregorianYear, gregorianMonth - 1, gregorianDay, 23, 59, 59).getTime() / 1000);
-
-    let matching = [];
-    for (let [_, ev] of this._events) {
-      // Event intersects with the day (end is exclusive, so an event
-      // ending exactly at midnight does not bleed into the next day)
-      if (ev.startTime <= dayEnd && ev.endTime > dayStart) {
-        matching.push(ev);
+    if (this._eventsByDay === null) {
+      this._eventsByDay = new Map();
+      const [since, until] = this._range ?? [dayStart, new Date(gregorianYear, gregorianMonth - 1, gregorianDay + 1).getTime() / 1000];
+      for (let ev of this._events.values()) {
+        let day = new Date(Math.max(since, ev.startTime) * 1000);
+        day.setHours(0, 0, 0, 0);
+        while (day.getTime() / 1000 < until) {
+          let begin = day.getTime() / 1000;
+          day.setDate(day.getDate() + 1);
+          let end = day.getTime() / 1000;
+          if (ev.endTime <= begin && !(ev.startTime === ev.endTime && ev.startTime >= begin)) break;
+          if (ev.startTime < end && (ev.endTime > begin || ev.startTime === ev.endTime)) {
+            if (!this._eventsByDay.has(begin)) this._eventsByDay.set(begin, []);
+            this._eventsByDay.get(begin).push(ev);
+          }
+        }
       }
+      for (let events of this._eventsByDay.values()) events.sort((a, b) => a.startTime - b.startTime);
     }
-    return matching;
+    return this._eventsByDay.get(dayStart) ?? [];
   }
 
   destroy() {
+    this._destroyed = true;
+    this._cancellable.cancel();
     if (this._proxy) {
       if (this._signalId) this._proxy.disconnectSignal(this._signalId);
       if (this._removedSignalId) this._proxy.disconnectSignal(this._removedSignalId);
+        if (this._clientSignalId) this._proxy.disconnectSignal(this._clientSignalId);
+        if (this._ownerSignalId) this._proxy.disconnect(this._ownerSignalId);
+        if (this._propertiesSignalId) this._proxy.disconnect(this._propertiesSignalId);
+        this._proxy.run_dispose();
       this._proxy = null;
     }
     this._listeners.clear();
     this._events.clear();
+    this._eventsByDay = null;
   }
 }
 
@@ -202,6 +296,7 @@ export class Events {
   }
 
   _init() {
+    this._years = [this.todayObj.persianYear, this.todayObj.islamicYear];
     this._eventsList = [];
     if (this.schema.get_boolean('show-islamic-events')) {
       this._eventsList.push(new islamicEvents(Tarikh, this.todayObj));
@@ -221,6 +316,7 @@ export class Events {
   }
 
   getEvents(maxLineLength = 40) {
+    if (this._years[0] !== this.todayObj.persianYear || this._years[1] !== this.todayObj.islamicYear) this._init();
     this._maxLineLength = maxLineLength;
     this._events = [];
     this._isHoliday = this.schema.get_boolean('none-work-' + this.todayObj.dayOfWeek);
@@ -246,7 +342,7 @@ export class Events {
           endDate.getHours() === 0 && endDate.getMinutes() === 0;
         let _utcMidnights = startDate.getUTCHours() === 0 && startDate.getUTCMinutes() === 0 &&
           endDate.getUTCHours() === 0 && endDate.getUTCMinutes() === 0;
-        let isAllDay = _wholeDays && (_localMidnights || _utcMidnights);
+        let isAllDay = gEv.endTime > gEv.startTime && (_localMidnights || (_wholeDays && _utcMidnights));
         if (!isAllDay) {
           let hh = startDate.getHours().toString().padStart(2, '0');
           let mm = startDate.getMinutes().toString().padStart(2, '0');
@@ -255,9 +351,10 @@ export class Events {
 
         this._events.push({
           type: 'google',
+          calUid: gEv.id.split('\n')[0],
+          uid: gEv.id.split('\n')[1],
           symbol: '📅',
-          // LRI/PDI isolate: mixed titles like "رضا نجات‌جو's birthday" keep the apostrophe attached to the LTR run
-          event: `\u2066${gEv.summary}\u2069${startTimeStr}`,
+          event: Str.bidiIsolate(gEv.summary) + (startTimeStr ? Str.bidiIsolate(startTimeStr, 'ltr') : ''),
           shadi: false,
           holiday: false
         });

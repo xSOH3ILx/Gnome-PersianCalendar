@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Persian Calendar (Shamsi)\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-02 15:04+0000\n"
+"POT-Creation-Date: 2026-10-14 14:33+0330\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,370 +17,470 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/calendar.js:106 src/calendar.js:620
+#: src/calendar.js:144
+msgid "سال بعد"
+msgstr ""
+
+#: src/calendar.js:149
+msgid "ماه بعد"
+msgstr ""
+
+#: src/calendar.js:162
+msgid "ماه قبل"
+msgstr ""
+
+#: src/calendar.js:167
+msgid "سال قبل"
+msgstr ""
+
+#: src/calendar.js:173 src/calendar.js:833
 msgid "امروز"
 msgstr ""
 
-#: src/calendar.js:140
+#: src/calendar.js:207
 msgid "+ افزودن رویداد"
 msgstr ""
 
-#: src/calendar.js:159
+#: src/calendar.js:222
 msgid "ویرایش رویداد"
 msgstr ""
 
-#: src/calendar.js:166
+#: src/calendar.js:229 src/calendar.js:240 src/calendar.js:1222
 msgid "عنوان رویداد"
 msgstr ""
 
-#: src/calendar.js:177
+#: src/calendar.js:237
+msgid "تاریخ رویداد:"
+msgstr ""
+
+#: src/calendar.js:251
 msgid "شروع (۰۹:۰۰)"
 msgstr ""
 
-#: src/calendar.js:183
+#: src/calendar.js:257
 msgid "پایان (۱۰:۰۰)"
 msgstr ""
 
-#: src/calendar.js:197
+#: src/calendar.js:268
+msgid "شروع"
+msgstr ""
+
+#: src/calendar.js:268
+msgid "پایان"
+msgstr ""
+
+#: src/calendar.js:277
 msgid "ساعت‌ها را خالی بگذارید تا رویداد تمام‌روز ثبت شود"
 msgstr ""
 
-#: src/calendar.js:206
+#: src/calendar.js:286
+msgid "در حال دریافت تقویم‌ها…"
+msgstr ""
+
+#: src/calendar.js:287 src/calendar.js:508
+msgid "تقویم اصلی در دسترس نیست"
+msgstr ""
+
+#: src/calendar.js:288
 msgid "پیش‌فرض سیستم"
 msgstr ""
 
-#: src/calendar.js:208 src/calendar.js:215 src/calendar.js:348
+#: src/calendar.js:290 src/calendar.js:299 src/calendar.js:509
 msgid "تقویم:"
 msgstr ""
 
-#: src/calendar.js:221
+#: src/calendar.js:305
 msgid "بدون یادآور"
 msgstr ""
 
-#: src/calendar.js:221
+#: src/calendar.js:305
 msgid "۱۰ دقیقه قبل"
 msgstr ""
 
-#: src/calendar.js:221
+#: src/calendar.js:305
 msgid "۳۰ دقیقه قبل"
 msgstr ""
 
-#: src/calendar.js:221
+#: src/calendar.js:305
 msgid "۱ ساعت قبل"
 msgstr ""
 
-#: src/calendar.js:221
+#: src/calendar.js:305
 msgid "۱ روز قبل"
 msgstr ""
 
-#: src/calendar.js:227 src/calendar.js:233
+#: src/calendar.js:307 src/calendar.js:313
 msgid "یادآور:"
 msgstr ""
 
-#: src/calendar.js:239
+#: src/calendar.js:319
 msgid "ذخیره"
 msgstr ""
 
-#: src/calendar.js:240
+#: src/calendar.js:320
 msgid "انصراف"
 msgstr ""
 
-#: src/calendar.js:307
+#: src/calendar.js:389
 msgid "ویرایش"
 msgstr ""
 
-#: src/calendar.js:316
+#: src/calendar.js:396
 msgid "حذف"
 msgstr ""
 
-#: src/calendar.js:327
+#: src/calendar.js:470
 msgid "در حال حذف…"
 msgstr ""
 
-#: src/calendar.js:333
+#: src/calendar.js:479
 msgid "رویداد حذف شد"
 msgstr ""
 
-#: src/calendar.js:372
+#: src/calendar.js:484
+msgid "حذف انجام نشد؛ اتصال و دسترسی تقویم را بررسی کنید"
+msgstr ""
+
+#: src/calendar.js:496
+msgid "تقویم قابل نوشتن در دسترس نیست؛ اتصال و دسترسی حساب را بررسی کنید"
+msgstr ""
+
+#: src/calendar.js:514
+msgid "فهرست تقویم‌ها در دسترس نیست؛ حساب آنلاین را بررسی کنید"
+msgstr ""
+
+#: src/calendar.js:534
 msgid "عنوان رویداد را وارد کنید"
 msgstr ""
 
-#: src/calendar.js:378
+#: src/calendar.js:540
 msgid "قالب ساعت درست نیست (مثال: ۰۹:۳۰)"
 msgstr ""
 
-#: src/calendar.js:384
+#: src/calendar.js:546
 msgid "ساعت پایان باید بعد از شروع باشد"
 msgstr ""
 
-#: src/calendar.js:395
+#: src/calendar.js:557
 msgid "در حال ذخیره…"
 msgstr ""
 
-#: src/calendar.js:416
+#: src/calendar.js:599
 msgid "رویداد ذخیره شد ✓"
 msgstr ""
 
-#: src/calendar.js:421
-msgid "خطا در ذخیرهٔ رویداد — جزئیات در journalctl"
+#: src/calendar.js:605
+msgid "جابجایی کامل نشد؛ نسخهٔ مقصد حفظ شد، هر دو تقویم را بررسی کنید"
 msgstr ""
 
-#: src/calendar.js:620
+#: src/calendar.js:606
+msgid "ذخیره انجام نشد؛ اتصال و دسترسی تقویم را بررسی کنید"
+msgstr ""
+
+#: src/calendar.js:833
 msgid "روز پیش"
 msgstr ""
 
-#: src/calendar.js:620
+#: src/calendar.js:833
 msgid "روز بعد"
 msgstr ""
 
-#: src/calendar.js:649 src/calendar.js:892
+#: src/calendar.js:862 src/calendar.js:1112
 msgid "هـ.ش"
 msgstr ""
 
-#: src/calendar.js:674 src/calendar.js:912
+#: src/calendar.js:887 src/calendar.js:1132
 msgid "هـ.ق"
 msgstr ""
 
-#: src/calendar.js:712 src/prefs.js:120
+#: src/calendar.js:922 src/prefs.js:128
 msgid "مناسبت‌ها و رویدادها"
 msgstr ""
 
-#: src/calendar.js:713 src/prefs.js:120
+#: src/calendar.js:923 src/prefs.js:128
 msgid "تبدیل تاریخ"
 msgstr ""
 
-#: src/calendar.js:755
+#: src/calendar.js:963
+msgid "در حال دریافت رویدادهای تقویم…"
+msgstr ""
+
+#: src/calendar.js:964
+msgid "دریافت رویدادها انجام نشد؛ اتصال و حساب آنلاین را بررسی کنید"
+msgstr ""
+
+#: src/calendar.js:965
+msgid "سرویس تقویم در دسترس نیست"
+msgstr ""
+
+#: src/calendar.js:966
+msgid "تقویمی در سیستم فعال نیست؛ حساب آنلاین را در تنظیمات گنوم اضافه کنید"
+msgstr ""
+
+#: src/calendar.js:983
 msgid "مناسبت یا رویدادی برای این روز ثبت نشده است."
 msgstr ""
 
-#: src/calendar.js:775 src/extension.js:201
+#: src/calendar.js:1003 src/extension.js:217
 msgid "تعطیل"
 msgstr ""
 
-#: src/calendar.js:814
+#: src/calendar.js:1044
 msgid "سال (مثال: ۱۴۰۴)"
 msgstr ""
 
-#: src/calendar.js:820
+#: src/calendar.js:1050
 msgid "ماه (۱-۱۲)"
 msgstr ""
 
-#: src/calendar.js:826
+#: src/calendar.js:1056
 msgid "روز (۱-۳۱)"
 msgstr ""
 
-#: src/calendar.js:876
-msgid "تاریخ وارد شده در تقویم معتبر نیست!"
+#: src/calendar.js:1096
+msgid "تاریخ معتبر نیست؛ بازهٔ پشتیبانی‌شده: سال شمسی ۱۱۷۸ تا ۱۶۳۳"
 msgstr ""
 
-#: src/calendar.js:901
+#: src/calendar.js:1121
 msgid "میلادی"
 msgstr ""
 
-#: src/calendar.js:925
+#: src/calendar.js:1145
 msgid "کپی"
 msgstr ""
 
-#: src/calendar.js:938
+#: src/calendar.js:1158
 msgid "رفتن به این تاریخ در تقویم"
 msgstr ""
 
-#: src/calendar.js:951
+#: src/calendar.js:1171
 msgid "از شمسی"
 msgstr ""
 
-#: src/calendar.js:952
+#: src/calendar.js:1172
 msgid "از میلادی"
 msgstr ""
 
-#: src/calendar.js:953
+#: src/calendar.js:1173
 msgid "از قمری"
+msgstr ""
+
+#: src/calendar.js:1204
+msgid "سال"
+msgstr ""
+
+#: src/calendar.js:1204
+msgid "ماه"
+msgstr ""
+
+#: src/calendar.js:1204
+msgid "روز"
 msgstr ""
 
 #: src/extension.js:36
 msgid "تقویم هجری شمسی"
 msgstr ""
 
-#: src/prefs.js:34
-msgid "تنظیمات عمومی"
+#: src/extension.js:117
+msgid "تنظیمات تقویم"
 msgstr ""
 
-#: src/prefs.js:41
-msgid "ابزارک نوار بالا"
+#: src/extension.js:132
+msgid "زمان تحویل سال"
+msgstr ""
+
+#: src/extension.js:152
+msgid "رفتن به امروز"
 msgstr ""
 
 #: src/prefs.js:42
+msgid "تنظیمات عمومی"
+msgstr ""
+
+#: src/prefs.js:49
+msgid "ابزارک نوار بالا"
+msgstr ""
+
+#: src/prefs.js:50
 msgid "نحوه نمایش تاریخ در نوار وضعیت گنوم"
 msgstr ""
 
-#: src/prefs.js:48
+#: src/prefs.js:56
 msgid "موقعیت در نوار"
 msgstr ""
 
-#: src/prefs.js:50
+#: src/prefs.js:58
 msgid "سمت راست"
 msgstr ""
 
-#: src/prefs.js:50
+#: src/prefs.js:58
 msgid "وسط نوار"
 msgstr ""
 
-#: src/prefs.js:50
+#: src/prefs.js:58
 msgid "سمت چپ"
 msgstr ""
 
-#: src/prefs.js:85
+#: src/prefs.js:93
 msgid "قالب نمایش تاریخ"
 msgstr ""
 
-#: src/prefs.js:98
+#: src/prefs.js:106
 msgid "شخصی‌سازی رنگ‌ها"
 msgstr ""
 
-#: src/prefs.js:103
+#: src/prefs.js:111
 msgid "استفاده از رنگ سفارشی در نوار"
 msgstr ""
 
-#: src/prefs.js:108
+#: src/prefs.js:116
 msgid "رنگ روزهای عادی"
 msgstr ""
 
-#: src/prefs.js:109
+#: src/prefs.js:117
 msgid "رنگ روزهای تعطیل"
 msgstr ""
 
-#: src/prefs.js:113
+#: src/prefs.js:121
 msgid "پنجره تقویم"
 msgstr ""
 
-#: src/prefs.js:118
+#: src/prefs.js:126
 msgid "برگه پیش‌فرض"
 msgstr ""
 
-#: src/prefs.js:133
+#: src/prefs.js:141
 msgid "اعلان‌ها"
 msgstr ""
 
-#: src/prefs.js:138
+#: src/prefs.js:146
 msgid "اعلان مناسبت‌های روز هنگام شروع"
 msgstr ""
 
-#: src/prefs.js:139
+#: src/prefs.js:147
 msgid "نمایش اعلان مناسبت‌های امروز پس از ورود به سیستم"
 msgstr ""
 
-#: src/prefs.js:170
+#: src/prefs.js:178
 msgid "رویدادها و همگام‌سازی"
 msgstr ""
 
-#: src/prefs.js:177
+#: src/prefs.js:185
 msgid "همگام‌سازی با حساب کاربری"
 msgstr ""
 
-#: src/prefs.js:178
+#: src/prefs.js:186
 msgid "اتصال خودکار به رویدادهای تقویم گوگل و GNOME Online Accounts"
 msgstr ""
 
-#: src/prefs.js:183
+#: src/prefs.js:191
 msgid "همگام‌سازی با Google Calendar / رویدادهای سیستم"
 msgstr ""
 
-#: src/prefs.js:184
+#: src/prefs.js:192
 msgid "نمایش رویدادها و یادآورهای شخصی ثبت شده در تقویم لینوکس/گوگل"
 msgstr ""
 
-#: src/prefs.js:191
+#: src/prefs.js:197
+msgid "تنظیم حساب‌های آنلاین گنوم"
+msgstr ""
+
+#: src/prefs.js:198
+msgid "حساب گوگل را اضافه کنید و دسترسی تقویم را روشن کنید"
+msgstr ""
+
+#: src/prefs.js:209
 msgid "مناسبت‌های رسمی و تقویمی"
 msgstr ""
 
-#: src/prefs.js:196
+#: src/prefs.js:214
 msgid "مناسبت‌های خورشیدی"
 msgstr ""
 
-#: src/prefs.js:197
+#: src/prefs.js:215
 msgid "تعطیلات و مناسبت‌های رسمی تقویم شمسی ایران"
 msgstr ""
 
-#: src/prefs.js:203
+#: src/prefs.js:221
 msgid "مناسبت‌های قمری"
 msgstr ""
 
-#: src/prefs.js:204
+#: src/prefs.js:222
 msgid "مناسبت‌ها و تعطیلات مذهبی و قمری"
 msgstr ""
 
-#: src/prefs.js:210
+#: src/prefs.js:228
 msgid "مناسبت‌های بین‌المللی"
 msgstr ""
 
-#: src/prefs.js:211
+#: src/prefs.js:229
 msgid "رویدادهای رسمی تقویم میلادی"
 msgstr ""
 
-#: src/prefs.js:217
+#: src/prefs.js:235
 msgid "جشن‌ها و مناسبت‌های کهن ایرانی"
 msgstr ""
 
-#: src/prefs.js:225
+#: src/prefs.js:243
 msgid "تنظیمات هفته"
 msgstr ""
 
-#: src/prefs.js:231
+#: src/prefs.js:249
 msgid "آغاز هفته و روزهای تعطیل"
 msgstr ""
 
-#: src/prefs.js:236
+#: src/prefs.js:254
 msgid "روز آغازین هفته"
 msgstr ""
 
-#: src/prefs.js:238 src/prefs.js:249
+#: src/prefs.js:256 src/prefs.js:267
 msgid "شنبه"
 msgstr ""
 
-#: src/prefs.js:238 src/prefs.js:249
+#: src/prefs.js:256 src/prefs.js:267
 msgid "یکشنبه"
 msgstr ""
 
-#: src/prefs.js:238 src/prefs.js:249
+#: src/prefs.js:256 src/prefs.js:267
 msgid "دوشنبه"
 msgstr ""
 
-#: src/prefs.js:249
+#: src/prefs.js:267
 msgid "سه‌شنبه"
 msgstr ""
 
-#: src/prefs.js:249
+#: src/prefs.js:267
 msgid "چهارشنبه"
 msgstr ""
 
-#: src/prefs.js:249
+#: src/prefs.js:267
 msgid "پنج‌شنبه"
 msgstr ""
 
-#: src/prefs.js:249
+#: src/prefs.js:267
 msgid "جمعه"
 msgstr ""
 
-#: src/prefs.js:252
+#: src/prefs.js:270
 msgid "تعطیلی هفتگی:"
 msgstr ""
 
-#: src/prefs.js:261
+#: src/prefs.js:279
 msgid "درباره"
 msgstr ""
 
-#: src/prefs.js:267
+#: src/prefs.js:285
 msgid "تقویم شمسی برای گنوم"
 msgstr ""
 
-#: src/prefs.js:268
+#: src/prefs.js:286
 msgid "نسخه مدرن، سبک و بازطراحی‌شده بر پایه استانداردهای Libadwaita"
 msgstr ""
 
-#: src/prefs.js:273
+#: src/prefs.js:291
 msgid "نسخه"
 msgstr ""
 
-#: src/prefs.js:279
+#: src/prefs.js:297
 msgid "مخزن سورس‌کد"
 msgstr ""

@@ -314,8 +314,7 @@ var islamicA_to_persian = (iY, iM, iD) => {
 
 
 
-var hilalIM = (country = 'IR') => {
-  return {
+const HILAL_TABLES = {
     "IR": {
       startYear: 1427,/* =iDoM:firstYear */
       startJD: 2453767,/* =islamicA_to_julianDay(startYear,1,1) */
@@ -367,8 +366,8 @@ var hilalIM = (country = 'IR') => {
         */
       }
     }
-  }[country];
-}
+};
+var hilalIM = (country = 'IR') => HILAL_TABLES[country];
 
 
 var julianDay_to_islamic = (julianDay) => {
@@ -524,7 +523,7 @@ var julianDay_to_all = (julianDay) => {
     dayOfWeek: ((~~(julianDay + 0.5) + 2) % 7),
     time: [date0.getHours(), date0.getMinutes(), date0.getSeconds(), date0.getMilliseconds()],
     timeStamp: timeStamp,
-    timezoneOffset: date0.getTimezoneOffset(timeStamp),
+    timezoneOffset: date0.getTimezoneOffset(),
     julianDayFloat: julianDay,
     julianDay: ~~(julianDay + 0.5)
   };
@@ -555,7 +554,7 @@ var timeStamp_to_all = (timeStamp) => {
     time: [hour, minute, second, miliSecond],
     timeStamp,
     timezoneOffset: date0.getTimezoneOffset(),
-    julianDayFloat: timeStamp_to_julianDay(timeStamp),
+    julianDayFloat: julianDay - 0.5 + time_to_miliSeconds(hour, minute, second, miliSecond) / 86400000,
     julianDay: ~~(julianDay + 0.5)
   };
 
@@ -563,7 +562,7 @@ var timeStamp_to_all = (timeStamp) => {
 
 
 var timeStamp_to_persian = (timeStamp) => {
-  return julianDay_to_persian(timeStamp_to_julianDay(timeStamp));
+  return gregorian_to_persian(...timeStamp_to_gregorian(timeStamp));
 }
 
 var timeStamp_to_islamic = (timeStamp) => {
@@ -571,7 +570,8 @@ var timeStamp_to_islamic = (timeStamp) => {
 }
 
 var timeStamp_to_gregorian = (timeStamp) => {
-  return julianDay_to_gregorian(timeStamp_to_julianDay(timeStamp));
+  const date = new Date(timeStamp);
+  return [date.getFullYear(), date.getMonth() + 1, date.getDate()];
 }
 
 
@@ -697,13 +697,20 @@ var timeStamp_to_julianDayFloat = (timeStamp, time = null) => {
   return ((timeStamp / 86400000) + 2440587.5);
 }
 var timeStamp_to_julianDay = (timeStamp, time = null) => {
+  if (time === null) return gregorian_to_julianDay(...timeStamp_to_gregorian(timeStamp));
   return ~~(timeStamp_to_julianDayFloat(timeStamp, time) + 0.5);
 }
 
 var julianDay_to_timeStamp = (julianDay, time = null) => {
-  let [hour, minute, second, miliSecond] = (time === null) ? [12, 0, 0, 0]
-    : [time[0] || 12, time[1] || 0, time[2] || 0, time[3] || 0];
-  let date0 = new Date(~~(julianDay - 2440587) * 86400000);
+  let [year, month, day] = julianDay_to_gregorian(Math.floor(julianDay + 0.5));
+  let localMilliseconds = Math.round((julianDay + 0.5 - Math.floor(julianDay + 0.5)) * 86400000);
+  let [hour, minute, second, miliSecond] = time ?? [0, 0, 0, localMilliseconds];
+  let date0 = new Date(0);
+  date0.setFullYear(year, month - 1, day);
+  hour ??= 0;
+  minute ??= 0;
+  second ??= 0;
+  miliSecond ??= 0;
   date0.setHours(hour, minute, second, miliSecond);
   return date0.getTime();
 }
@@ -779,7 +786,7 @@ var daysOfMonth_persian = (year, month) => {
 
 var check_persian = (year, month, day, strict = true) => {
   return !(
-    isNaN(year) || isNaN(month) || isNaN(day) ||
+    !Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) ||
     year < -32767 || year > 32767 ||
     month < 1 || month > 12 ||
     day < 1 || day > ((month === 12 && (!strict || year < 1178 || year > 1633)) ? 30 : daysOfMonth_persian(year, month))
@@ -793,7 +800,7 @@ var daysOfMonth_gregorian = (year, month) => {
 
 var check_gregorian = (year, month, day, strict = true) => {
   return !(
-    isNaN(year) || isNaN(month) || isNaN(day) ||
+    !Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) ||
     year < -32767 || year > 32767 ||
     month < 1 || month > 12 ||
     day < 1 || day > ((!strict && month === 2) ? 29 : daysOfMonth_gregorian(year, month))
@@ -813,7 +820,7 @@ var daysOfMonth_islamic = (year, month) => {
 
 var check_islamic = (year, month, day, strict = false) => {
   return !(
-    isNaN(year) || isNaN(month) || isNaN(day) ||
+    !Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) ||
     year < -641 || year > 32767 ||
     month < 1 || month > 12 ||
     day < 1 || day > ((!strict) ? 30 : daysOfMonth_islamic(year, month))
@@ -833,7 +840,7 @@ var daysOfMonth_islamicA = (year, month) => {
 
 var check_islamicA = (year, month, day, strict = false) => {
   return !(
-    isNaN(year) || isNaN(month) || isNaN(day) ||
+    !Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) ||
     year < -641 || year > 32767 ||
     month < 1 || month > 12 ||
     day < 1 || day > ((!strict) ? 30 : daysOfMonth_islamicA(year, month))
@@ -1273,26 +1280,9 @@ var TarikhObject = function (timeStamp = Date.now()) {
     },
 
     setJulianDayToOnlyDates(julianDay) {
-      const a = julianDay_to_all(julianDay);
-      [
-        this[_all].julianDayFloat,
-        this[_all].julianDay,
-        this[_all].timeStamp,
-        this[_all].persian,
-        this[_all].gregorian,
-        this[_all].islamic,
-        this[_all].islamicA,
-        this[_all].dayOfWeek
-      ] = [
-          ~~(a.julianDayFloat) + (this[_all].julianDayFloat % 1),
-          ~~(a.julianDay + 0.5),
-          a.timeStamp,
-          a.persian,
-          a.gregorian,
-          a.islamic,
-          a.islamicA,
-          a.dayOfWeek
-        ];
+      const time = this[_all].time;
+      this[_all] = julianDay_to_all(julianDay);
+      this[_setTime](...time);
     },
 
     set dayOfWeek(dayNum) {

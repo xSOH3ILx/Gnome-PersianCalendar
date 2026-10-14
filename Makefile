@@ -34,7 +34,7 @@ pot:
 		--output=po/shamsi-calendar.pot $(SRC)/*.js
 
 test:
-	node --test
+	npm test
 
 lint:
 	npx eslint $(SRC)

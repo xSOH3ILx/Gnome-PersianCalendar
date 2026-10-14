@@ -9,7 +9,7 @@
 
 1. **معماری ماژولار و سازگاری با GNOME 46 تا GNOME 50:**
    - توسعه بر پایه استانداردهای رسمی `GJS ESM` (`import ... from 'gi://...'` و `import ... from 'resource:///org/gnome/shell/...'`).
-   - حذف کامل متدهای منسوخ و جلوگیری از آلودگی سراسری (`Global Scope Pollution`).
+   - استفاده از APIهای بومی و مدیریت چرخهٔ عمر منابع (`Global Scope Pollution`).
 
 2. **حذف بخش‌های زائد و مدیریت ایمن منابع (`Debloat & Memory Safety`):**
    - حذف ۱۰۰٪ محاسبات اوقات شرعی، پخش صوت اذان، لیست شهرها و کدهای دستکاری فونت در مسیر کاربر (`~/fonts`).
@@ -17,7 +17,7 @@
    - جایگزینی تایمرهای مکرر با تایمر بهینه تغییر روز (`Day-change scheduler`).
 
 3. **یکپارچگی ظاهر با Libadwaita و تم سیستم (`UI/UX Modernization`):**
-   - استایل‌دهی در `stylesheet.css` با استفاده از متغیرهای استاندارد تم گنوم (`alpha(currentColor, ...)` و مقادیر رنگی سازگار با تم تیره و روشن).
+   - استایل‌دهی در `stylesheet.css` با استفاده از رنگ متن ارث‌بری‌شده و رنگ‌های `rgba` قابل پشتیبانی در St.
    - نشانگرهای وضعیت روز انتخابی، روز جاری (`Today`) و روزهای تعطیل رسمی.
    - امکان شخصی‌سازی قالب نمایش تاریخ در نوار بالا (`Top Panel`).
 
@@ -44,7 +44,7 @@
 | **فاز ۲** | **بازطراحی ظاهر و رابط کاربری** | مدرن‌سازی `stylesheet.css` با استایل‌های Adwaita، پدینگ‌ها و گرید تمیز روزها | ✅ انجام شد |
 | **فاز ۳** | **سیستم رویدادها و سینک Google Calendar** | پیاده‌سازی پروکسی `CalendarServer` روی DBus و ادغام رویدادهای شخصی گوگل | ✅ انجام شد |
 | **فاز ۴** | **بازنویسی تنظیمات با Libadwaita** | بازنویسی کامل `prefs.js` با کامپوننت‌های مدرن `Adw` | ✅ انجام شد |
-| **فاز ۵** | **کنترل کیفیت، تست و استقرار** | اعتبارسنجی لاگ‌ها در گنوم ۵۰ و آماده‌سازی اسکریپت نصب تمیز | ✅ آماده نصب |
+| **فاز ۵** | **کنترل کیفیت، تست و استقرار** | تست‌های بازگشتی، قرارداد D-Bus، EDS واقعی و رندر جدا در GNOME 50.1؛ نسخه‌های ۴۶ تا ۴۹ نیازمند آزمون عملی جدا هستند | ✅ آماده نصب |
 
 ---
 
@@ -56,7 +56,7 @@
 mkdir -p ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir
 
 # کپی فایل‌ها از سورس پروژه
-cp -r extension/gnome_46-50/shamsi-calendar@gnome.scr.ir/* ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir/
+cp -r src/* ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir/
 
 # کامپایل اسکیما
 glib-compile-schemas ~/.local/share/gnome-shell/extensions/shamsi-calendar@gnome.scr.ir/schemas/
@@ -77,7 +77,7 @@ gnome-extensions install ../../../shamsi-calendar@gnome.scr.ir.shell-extension.z
 ### ۴. ساختار فایل‌های پروژه پس از پالایش (Cleaned File Tree)
 
 ```text
-extension/gnome_46-50/shamsi-calendar@gnome.scr.ir/
+src/
 ├── metadata.json           # متادیتا و مشخصات سازگاری با گنوم ۴۶-۵۰
 ├── extension.js            # فایل اصلی لودر افزونه و مدیریت نوار ابزار
 ├── calendar.js             # پاپ‌آپ تقویم، گرید ماه‌ها، تب‌ها و ابزار تبدیل تاریخ

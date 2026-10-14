@@ -1,8 +1,8 @@
 import GObject from 'gi://GObject';
 import Clutter from 'gi://Clutter';
 import St from 'gi://St';
-import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
+import Pango from 'gi://Pango';
 
 import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
@@ -37,6 +37,7 @@ const Indicator = GObject.registerClass(
       );
 
       this.schema_signals = [];
+      this._isHoliday = false;
 
       this._mainLabel = new St.Label({
         style_class: 'shcalendar-panel-label',
@@ -45,6 +46,7 @@ const Indicator = GObject.registerClass(
       });
 
       this.add_child(this._mainLabel);
+      this._mainLabel.set_text_direction(Clutter.TextDirection.RTL);
 
       this._applyLabelStyle();
 
@@ -56,6 +58,9 @@ const Indicator = GObject.registerClass(
         this.schema.connect('changed::widget-position', () => this._restartExtension()),
         this.schema.connect('changed::window-position', () => this._restartExtension())
       );
+      this.schema_signals.push(this.schema.connect('changed', (settings, key) => {
+        if (key.startsWith('none-work-') || key.startsWith('show-')) this.updateDate(false, true);
+      }));
 
       let bottomBarLabel = new St.Label({
         text: '',
@@ -64,6 +69,10 @@ const Indicator = GObject.registerClass(
         x_expand: true,
         style_class: 'shcalendar-bottom-label'
       });
+      bottomBarLabel.set_text_direction(Clutter.TextDirection.RTL);
+      bottomBarLabel.clutter_text.set_line_alignment(Pango.Alignment.RIGHT);
+      bottomBarLabel.clutter_text.line_wrap = true;
+      bottomBarLabel.clutter_text.line_wrap_mode = Pango.WrapMode.WORD_CHAR;
 
       this._todayJD = '';
 
@@ -93,6 +102,7 @@ const Indicator = GObject.registerClass(
         vertical: false,
         style_class: 'shcalendar-action-bar'
       });
+      actionButtons.set_text_direction(Clutter.TextDirection.RTL);
       vbox.add_child(actionButtons);
 
       // Preferences button
@@ -104,6 +114,7 @@ const Indicator = GObject.registerClass(
         child: prefsIcon,
         reactive: true,
         can_focus: true,
+        accessible_name: _('تنظیمات تقویم'),
         style_class: 'button shcalendar-btn'
       });
       prefsButton.connect('clicked', () => this._openPreferences());
@@ -118,6 +129,7 @@ const Indicator = GObject.registerClass(
         child: nowroozIcon,
         reactive: true,
         can_focus: true,
+        accessible_name: _('زمان تحویل سال'),
         style_class: 'button shcalendar-btn'
       });
       nowroozButton.connect('clicked', () => {
@@ -137,6 +149,7 @@ const Indicator = GObject.registerClass(
         child: todayIcon,
         reactive: true,
         can_focus: true,
+        accessible_name: _('رفتن به امروز'),
         style_class: 'button shcalendar-btn'
       });
       todayButton.connect('clicked', () => {
@@ -151,16 +164,12 @@ const Indicator = GObject.registerClass(
         if (isOpen) {
           // Cheap no-op unless the day actually changed (covers suspend/resume)
           this.updateDate();
-          if (this._googleSync) {
-            this._googleSync.requestRange();
-          }
-          this._calendar._selectedDateObj.setNow();
-          this._calendar._update();
         }
+        this._calendar.setVisible(isOpen);
       });
     }
 
-    _applyLabelStyle(isHoliday = false) {
+    _applyLabelStyle(isHoliday = this._isHoliday) {
       if (!this._mainLabel) return;
       if (this.schema.get_boolean('custom-color')) {
         let colorKey = _labelSchemaName(this.schema, isHoliday);
@@ -168,6 +177,12 @@ const Indicator = GObject.registerClass(
       } else {
         this._mainLabel.set_style('');
       }
+    }
+
+    setGoogleSync(sync) {
+      this._googleSync = sync;
+      this._calendar.setGoogleSync(sync);
+      this.updateDate(false, true);
     }
 
     updateDate(showNotification = false, force = false) {
@@ -179,6 +194,7 @@ const Indicator = GObject.registerClass(
 
       let events = new Events.Events(dateObj, this.schema, this._googleSync).getEvents(150);
       let isHoliday = events[1];
+      this._isHoliday = isHoliday;
 
       this._applyLabelStyle(isHoliday);
 
@@ -263,10 +279,8 @@ export default class ShamsiCalendarExtension extends Extension {
   enable() {
     this._timers = [];
     this._settings = this.getSettings();
-
-    if (this._settings.get_boolean('enable-google-calendar')) {
-      this._googleSync = new Events.GoogleCalendarSync();
-    }
+    this._syncSettingId = this._settings.connect('changed::enable-google-calendar', () => this._updateGoogleSync());
+    this._updateGoogleSync();
 
     this._createIndicator();
 
@@ -274,6 +288,17 @@ export default class ShamsiCalendarExtension extends Extension {
 
     // Refresh the panel label right after local midnight
     this._scheduleNextUpdate();
+  }
+
+  _updateGoogleSync() {
+    const previous = this._googleSync;
+    if (this._settings.get_boolean('enable-google-calendar')) {
+      this._googleSync ??= new Events.GoogleCalendarSync();
+    } else this._googleSync = null;
+    if (previous !== this._googleSync) {
+      this._indicator?.setGoogleSync(this._googleSync);
+      previous?.destroy();
+    }
   }
 
   _createIndicator() {
@@ -307,6 +332,7 @@ export default class ShamsiCalendarExtension extends Extension {
         this._indicator = null;
       }
       if (this._settings) {
+        this._updateGoogleSync();
         this._createIndicator();
         this._indicator.updateDate(false, true);
       }
@@ -328,6 +354,7 @@ export default class ShamsiCalendarExtension extends Extension {
       () => {
         this._timers = this._timers.filter((t) => t !== timer);
         this._indicator?.updateDate();
+        this._indicator?._calendar.queueRefresh();
         this._scheduleNextUpdate();
         return GLib.SOURCE_REMOVE;
       }
@@ -356,6 +383,8 @@ export default class ShamsiCalendarExtension extends Extension {
       this._googleSync = null;
     }
 
+    if (this._settings && this._syncSettingId) this._settings.disconnect(this._syncSettingId);
+    this._syncSettingId = 0;
     this._settings = null;
   }
 }
