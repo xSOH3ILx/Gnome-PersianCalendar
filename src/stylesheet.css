@@ -61,6 +61,11 @@
   padding: 4px 0 8px 0;
 }
 
+.shcalendar-day-heading.holiday {
+  color: #e01b24;
+  opacity: 1;
+}
+
 /* Calendar Grid Day Buttons */
 .shcalendar-day-button {
   min-width: 44px;
@@ -82,9 +87,19 @@
   background-color: rgba(36, 98, 167, 0.12);
 }
 
+.shcalendar-day-button.today.holiday {
+  border-color: #c01c28;
+  background-color: rgba(192, 28, 40, 0.12);
+}
+
 .shcalendar-day-button.selected {
   background-color: #2462a7;
   color: #ffffff;
+}
+
+.shcalendar-day-button.selected.holiday {
+  background-color: #c01c28;
+  border-color: #c01c28;
 }
 
 .shcalendar-day-button.selected .shcalendar-pdate-day-txt,

@@ -48,7 +48,6 @@ export class Calendar {
     this.actorRight.connect('scroll-event', this._onScroll);
 
     this._selectedDateObj = new Tarikh.TarikhObject();
-    this._rtl = true;
     this._destroyed = false;
     this._visible = false;
     this._refreshIdleId = 0;
@@ -140,15 +139,15 @@ export class Calendar {
 
     let style = 'shcalendar-nav-button';
     // Persian navigation: next on the left, previous on the right.
-    let prevYearIcon = new St.Icon({ icon_name: this._rtl ? 'go-last-symbolic' : 'go-first-symbolic', icon_size: 16 });
-    let prevYearBtn = new St.Button({ can_focus: true, style_class: style, child: prevYearIcon, accessible_name: _('سال بعد') });
-    prevYearBtn.connect('clicked', this._rtl ? this._onNextYearButtonClicked : this._onPrevYearButtonClicked);
-    this._topBox.add_child(prevYearBtn);
+    let nextYearIcon = new St.Icon({ icon_name: 'go-first-symbolic', icon_size: 16 });
+    let nextYearBtn = new St.Button({ can_focus: true, style_class: style, child: nextYearIcon, accessible_name: _('سال بعد') });
+    nextYearBtn.connect('clicked', this._onNextYearButtonClicked);
+    this._topBox.add_child(nextYearBtn);
 
-    let prevMonthIcon = new St.Icon({ icon_name: this._rtl ? 'go-next-symbolic' : 'go-previous-symbolic', icon_size: 16 });
-    let prevMonthBtn = new St.Button({ can_focus: true, style_class: style, child: prevMonthIcon, accessible_name: _('ماه بعد') });
-    prevMonthBtn.connect('clicked', this._rtl ? this._onNextMonthButtonClicked : this._onPrevMonthButtonClicked);
-    this._topBox.add_child(prevMonthBtn);
+    let nextMonthIcon = new St.Icon({ icon_name: 'go-previous-symbolic', icon_size: 16 });
+    let nextMonthBtn = new St.Button({ can_focus: true, style_class: style, child: nextMonthIcon, accessible_name: _('ماه بعد') });
+    nextMonthBtn.connect('clicked', this._onNextMonthButtonClicked);
+    this._topBox.add_child(nextMonthBtn);
 
     this._monthLabel = new St.Label({
       style_class: 'shcalendar-month-label',
@@ -158,15 +157,15 @@ export class Calendar {
     this._topBox.add_child(this._monthLabel);
     this._monthLabel.set_text_direction(Clutter.TextDirection.RTL);
 
-    let nextMonthIcon = new St.Icon({ icon_name: this._rtl ? 'go-previous-symbolic' : 'go-next-symbolic', icon_size: 16 });
-    let nextMonthBtn = new St.Button({ can_focus: true, style_class: style, child: nextMonthIcon, accessible_name: _('ماه قبل') });
-    nextMonthBtn.connect('clicked', this._rtl ? this._onPrevMonthButtonClicked : this._onNextMonthButtonClicked);
-    this._topBox.add_child(nextMonthBtn);
+    let prevMonthIcon = new St.Icon({ icon_name: 'go-next-symbolic', icon_size: 16 });
+    let prevMonthBtn = new St.Button({ can_focus: true, style_class: style, child: prevMonthIcon, accessible_name: _('ماه قبل') });
+    prevMonthBtn.connect('clicked', this._onPrevMonthButtonClicked);
+    this._topBox.add_child(prevMonthBtn);
 
-    let nextYearIcon = new St.Icon({ icon_name: this._rtl ? 'go-first-symbolic' : 'go-last-symbolic', icon_size: 16 });
-    let nextYearBtn = new St.Button({ can_focus: true, style_class: style, child: nextYearIcon, accessible_name: _('سال قبل') });
-    nextYearBtn.connect('clicked', this._rtl ? this._onPrevYearButtonClicked : this._onNextYearButtonClicked);
-    this._topBox.add_child(nextYearBtn);
+    let prevYearIcon = new St.Icon({ icon_name: 'go-last-symbolic', icon_size: 16 });
+    let prevYearBtn = new St.Button({ can_focus: true, style_class: style, child: prevYearIcon, accessible_name: _('سال قبل') });
+    prevYearBtn.connect('clicked', this._onPrevYearButtonClicked);
+    this._topBox.add_child(prevYearBtn);
 
     let todayBtn = new St.Button({ can_focus: true,
       style_class: 'shcalendar-today-button',
@@ -181,12 +180,12 @@ export class Calendar {
   _onScroll = (actor, event) => {
     switch (event.get_scroll_direction()) {
       case Clutter.ScrollDirection.UP:
-      case Clutter.ScrollDirection.LEFT:
-        this._onNextMonthButtonClicked();
-        break;
-      case Clutter.ScrollDirection.DOWN:
       case Clutter.ScrollDirection.RIGHT:
         this._onPrevMonthButtonClicked();
+        break;
+      case Clutter.ScrollDirection.DOWN:
+      case Clutter.ScrollDirection.LEFT:
+        this._onNextMonthButtonClicked();
         break;
     }
   }
@@ -687,7 +686,7 @@ export class Calendar {
       const weekdayAbbr = ['ش', '۱ش', '۲ش', '۳ش', '۴ش', '۵ش', 'ج'];
       for (let i = weekStart; i < (weekStart + 7); i++) {
         let label = new St.Label({
-          style_class: 'shcalendar-day-heading shcalendar-rtl',
+          style_class: 'shcalendar-day-heading shcalendar-rtl' + (this.schema.get_boolean(`none-work-${i % 7}`) ? ' holiday' : ''),
           text: weekdayAbbr[i % 7]
         });
         let [left, top, width, height] = this._rotate(

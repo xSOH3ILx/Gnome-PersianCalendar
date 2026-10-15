@@ -103,6 +103,63 @@ test('Persian week begins at the right regardless of system locale', () => {
   c.destroy();
 });
 
+test('navigation arrows point toward their action in the Persian layout', () => {
+  const { calendar: c } = environment();
+  assert.equal(c._topBox.direction, Clutter.TextDirection.LTR);
+  for (const [index, name, icon, expected] of [
+    [0, 'سال بعد', 'go-first-symbolic', [1406, 7, 22]],
+    [1, 'ماه بعد', 'go-previous-symbolic', [1405, 8, 22]],
+    [3, 'ماه قبل', 'go-next-symbolic', [1405, 6, 22]],
+    [4, 'سال قبل', 'go-last-symbolic', [1404, 7, 22]]
+  ]) {
+    const button = c._topBox.children[index];
+    assert.equal(button.accessible_name, name);
+    assert.equal(button.children[0].icon_name, icon);
+    c._selectedDateObj.persian = [1405, 7, 22];
+    button.emit('clicked');
+    assert.deepEqual(c._selectedDateObj.persian, expected);
+  }
+  c._selectedDateObj.persian = [1405, 12, 29];
+  c._topBox.children[1].emit('clicked');
+  assert.deepEqual(c._selectedDateObj.persian, [1406, 1, 29]);
+  c._topBox.children[3].emit('clicked');
+  assert.deepEqual(c._selectedDateObj.persian, [1405, 12, 29]);
+  c.destroy();
+});
+
+test('scroll follows RTL horizontal navigation and chronological vertical navigation', () => {
+  const { calendar: c } = environment();
+  for (const [direction, month] of [[Clutter.ScrollDirection.LEFT, 8], [Clutter.ScrollDirection.RIGHT, 6],
+    [Clutter.ScrollDirection.UP, 6], [Clutter.ScrollDirection.DOWN, 8]]) {
+    c._selectedDateObj.persian = [1405, 7, 22];
+    c._onScroll(null, { get_scroll_direction: () => direction });
+    assert.deepEqual(c._selectedDateObj.persian, [1405, month, 22]);
+  }
+  c.destroy();
+});
+
+test('holiday selection retains holiday state and weekday headings follow non-working settings', () => {
+  const { calendar: c, settings } = environment();
+  c._selectedDateObj.persian = [1405, 7, 22]; c._update();
+  const holiday = [...c._gridDays.entries()].find(([, day]) => day.events[1]);
+  const ordinary = [...c._gridDays.entries()].find(([, day]) => !day.events[1]);
+  for (const [jd, expected] of [[holiday[0], true], [ordinary[0], false], [holiday[0], true]]) {
+    c._gridDays.get(jd).button.emit('clicked');
+    const button = c._gridDays.get(jd).button;
+    assert(button.classes.has('selected'));
+    assert.equal(button.classes.has('holiday'), expected);
+    assert.equal([...c._gridDays.values()].filter(day => day.button.classes?.has('selected')).length, 1);
+  }
+  const headings = () => descendants(c.actorRight).filter(a => a.style_class?.includes('shcalendar-day-heading'));
+  assert(headings().find(a => a.text === 'ج').style_class.includes('holiday'));
+  assert(!headings().find(a => a.text === 'ش').style_class.includes('holiday'));
+  settings.set_boolean('none-work-0', true); c._update();
+  assert(headings().find(a => a.text === 'ش').style_class.includes('holiday'));
+  settings.set_boolean('none-work-6', false); c._update();
+  assert(!headings().find(a => a.text === 'ج').style_class.includes('holiday'));
+  c.destroy();
+});
+
 test('converter rejects invalid dates and malformed strings, accepts Arabic/Persian digits and retains input', () => {
   const { calendar: c } = environment(); c._selectedTab = 'dateConvert'; c._update();
   const fill = (year, month, day) => {
