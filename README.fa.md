@@ -39,7 +39,7 @@
   <li><strong>نشانگر قابل تنظیم در نوار وضعیت:</strong> نمایش تاریخ شمسی در نوار بالای گنوم با قالب دلخواه، انتخاب موقعیت (چپ، وسط یا راست) و رنگ متن سفارشی.</li>
   <li><strong>گرید ماهانه سه‌تقویمی:</strong> نمایش هم‌زمان تاریخ <strong>خورشیدی (جلالی)</strong>، <strong>میلادی</strong> و <strong>هجری قمری</strong> با تفکیک تعطیلات، دکمه بازگشت سریع به «امروز» و ناوبری استاندارد راست‌به‌چپ.</li>
   <li><strong>مناسبت‌ها و تعطیلات رسمی:</strong> پوشش تعطیلات و مناسبت‌های شمسی، قمری، میلادی و جشن‌های کهن ایرانی همراه با نشانگر آبی زیر روزهای دارای رویداد شخصی یا گوگل.</li>
-  <li><strong>افزودن مناسبت دلخواه با JSON بدون تغییر کد:</strong> تعریف یا اصلاح مناسبت‌ها از طریق فایل <code>~/.config/shamsi-calendar/extra-events.json</code> (راهنمای کامل در <a href="docs/EVENTS.md"><code>docs/EVENTS.md</code></a>).</li>
+  <li><strong>افزودن مناسبت دلخواه با JSON بدون تغییر کد:</strong> تعریف یا اصلاح مناسبت‌ها از طریق فایل <code dir="ltr">~/.config/shamsi-calendar/extra-events.json</code> (راهنمای کامل در <a href="docs/EVENTS.md"><code dir="ltr">docs/EVENTS.md</code></a>).</li>
 </ul>
 
 <h3>رویدادهای شخصی و همگام‌سازی Google Calendar</h3>
@@ -53,7 +53,7 @@
 <ul>
   <li><strong>مبدل یکپارچه تاریخ:</strong> تبدیل تاریخ‌های شمسی، میلادی و قمری با پشتیبانی از ارقام فارسی، عربی و لاتین (بازه اعتبارسنجی‌شده سال شمسی ۱۱۷۸ تا ۱۶۳۳).</li>
   <li><strong>اعلان‌های هوشمند:</strong> اعلان اختیاری هنگام شروع، نمایش مناسبت‌های روز و اعلام دقیق لحظه تحویل سال با تایمر بهینه نیمه‌شب به‌جای بررسی مداوم ۶۰ ثانیه‌ای.</li>
-  <li><strong>معماری سازگار با GNOME 46–50:</strong> مبتنی بر ESM با پنجره تنظیمات بومی <strong>GTK4 / Libadwaita</strong>، ایزوله‌سازی متن‌های ترکیبی BiDi و زیرساخت ترجمه <code>gettext</code> (<code>po/shamsi-calendar.pot</code>).</li>
+  <li><strong>معماری سازگار با GNOME 46–50:</strong> مبتنی بر ESM با پنجره تنظیمات بومی <strong>GTK4 / Libadwaita</strong>، ایزوله‌سازی متن‌های ترکیبی BiDi و زیرساخت ترجمه <code>gettext</code> (<code dir="ltr">po/shamsi-calendar.pot</code>).</li>
 </ul>
 
 </div>
@@ -197,9 +197,9 @@ make pack          # کامپایل schema و ساخت بسته قابل نصب 
 
 <h2>نقشه راه و تاریخچه تغییرات</h2>
 <ul>
-  <li>برنامه نسخه‌های بعدی (ناوبری کیبورد، جستجوی مناسبت‌ها، پیش‌نمای زنده قالب تاریخ و انتشار در EGO): <a href="docs/ROADMAP.md"><code>docs/ROADMAP.md</code></a></li>
-  <li>تاریخچه تغییرات نسخه‌ها: <a href="CHANGELOG.md"><code>CHANGELOG.md</code></a></li>
-  <li>راهنمای افزودن مناسبت‌های JSON: <a href="docs/EVENTS.md"><code>docs/EVENTS.md</code></a></li>
+  <li>برنامه نسخه‌های بعدی (ناوبری کیبورد، جستجوی مناسبت‌ها، پیش‌نمای زنده قالب تاریخ و انتشار در EGO): <a href="docs/ROADMAP.md"><code dir="ltr">docs/ROADMAP.md</code></a></li>
+  <li>تاریخچه تغییرات نسخه‌ها: <a href="CHANGELOG.md"><code dir="ltr">CHANGELOG.md</code></a></li>
+  <li>راهنمای افزودن مناسبت‌های JSON: <a href="docs/EVENTS.md"><code dir="ltr">docs/EVENTS.md</code></a></li>
 </ul>
 
 <h2>مجوز و قدردانی</h2>
